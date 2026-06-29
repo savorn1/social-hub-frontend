@@ -1,5 +1,11 @@
 import { defineStore } from 'pinia'
-import type { Conversation, ConversationNote, ConversationPriority, Message, PaginatedResult } from '~/types'
+import type {
+  Conversation,
+  ConversationNote,
+  ConversationPriority,
+  Message,
+  PaginatedResult,
+} from '~/types'
 import { useConversationService } from '~/services/conversation.service'
 
 export const useInboxStore = defineStore('inbox', () => {

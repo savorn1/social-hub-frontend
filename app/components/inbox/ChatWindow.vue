@@ -26,10 +26,16 @@
       <!-- Human handover toggle -->
       <button
         class="text-xs px-2.5 py-1.5 rounded-lg border font-medium transition-all flex items-center gap-1.5"
-        :class="conversation.handoverMode
-          ? 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100'
-          : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300 hover:text-gray-700'"
-        :title="conversation.handoverMode ? 'Bot is paused — click to return control to bot' : 'Take over from bot'"
+        :class="
+          conversation.handoverMode
+            ? 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100'
+            : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300 hover:text-gray-700'
+        "
+        :title="
+          conversation.handoverMode
+            ? 'Bot is paused — click to return control to bot'
+            : 'Take over from bot'
+        "
         @click="emit('toggleHandover', !conversation.handoverMode)"
       >
         <CpuChipIcon class="w-3.5 h-3.5" />
@@ -98,19 +104,25 @@
     </div>
 
     <!-- Secondary action bar -->
-    <div class="flex items-center gap-2 px-4 py-2 border-b border-gray-100 bg-white flex-shrink-0 flex-wrap">
+    <div
+      class="flex items-center gap-2 px-4 py-2 border-b border-gray-100 bg-white flex-shrink-0 flex-wrap"
+    >
       <!-- Tab switcher -->
       <div class="flex rounded-lg border border-gray-200 overflow-hidden text-xs mr-2">
         <button
           class="px-3 py-1.5 font-medium transition-colors"
-          :class="activeTab === 'chat' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50'"
+          :class="
+            activeTab === 'chat' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50'
+          "
           @click="activeTab = 'chat'"
         >
           Chat
         </button>
         <button
           class="px-3 py-1.5 font-medium transition-colors"
-          :class="activeTab === 'notes' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50'"
+          :class="
+            activeTab === 'notes' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50'
+          "
           @click="activeTab = 'notes'"
         >
           Notes
@@ -331,7 +343,10 @@
     </div>
 
     <!-- Input -->
-    <div v-if="activeTab === 'chat'" class="flex items-end gap-2 px-4 py-3 border-t border-gray-200 bg-white flex-shrink-0">
+    <div
+      v-if="activeTab === 'chat'"
+      class="flex items-end gap-2 px-4 py-3 border-t border-gray-200 bg-white flex-shrink-0"
+    >
       <input ref="fileInput" type="file" class="hidden" @change="onFileChange" />
       <button
         class="flex-shrink-0 p-2 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
@@ -372,8 +387,13 @@
 <script setup lang="ts">
 import { PaperAirplaneIcon } from '@heroicons/vue/24/solid'
 import {
-  UserIcon, BoltIcon, PaperClipIcon, CpuChipIcon,
-  FlagIcon, ChevronDownIcon, ArchiveBoxIcon,
+  UserIcon,
+  BoltIcon,
+  PaperClipIcon,
+  CpuChipIcon,
+  FlagIcon,
+  ChevronDownIcon,
+  ArchiveBoxIcon,
 } from '@heroicons/vue/24/outline'
 import type { Conversation, ConversationPriority, Message, User, Prompt } from '~/types'
 import { platformColor, formatDate, truncate, initials } from '~/utils'

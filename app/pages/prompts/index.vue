@@ -16,9 +16,11 @@
         v-for="tab in categoryTabs"
         :key="tab.value ?? 'all'"
         class="px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px"
-        :class="activeCategory === tab.value
-          ? 'border-blue-600 text-blue-600'
-          : 'border-transparent text-gray-500 hover:text-gray-700'"
+        :class="
+          activeCategory === tab.value
+            ? 'border-blue-600 text-blue-600'
+            : 'border-transparent text-gray-500 hover:text-gray-700'
+        "
         @click="setCategory(tab.value)"
       >
         <span
@@ -45,7 +47,8 @@
             <span
               class="inline-flex items-center text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide flex-shrink-0"
               :class="categoryStyle(p.category)"
-            >{{ p.category }}</span>
+              >{{ p.category }}</span
+            >
             <p class="font-semibold text-gray-900 text-sm truncate">{{ p.name }}</p>
           </div>
           <div class="flex gap-2 flex-shrink-0">
@@ -56,7 +59,9 @@
               <ClockIcon class="w-3 h-3" /> v{{ p.currentVersion }}
             </button>
             <button class="text-xs text-blue-600 hover:underline" @click="openEdit(p)">Edit</button>
-            <button class="text-xs text-red-500 hover:text-red-700" @click="confirmRemove(p.id)">Delete</button>
+            <button class="text-xs text-red-500 hover:text-red-700" @click="confirmRemove(p.id)">
+              Delete
+            </button>
           </div>
         </div>
 
@@ -64,7 +69,7 @@
 
         <pre
           class="text-xs bg-gray-50 border border-gray-100 rounded-lg p-3 overflow-hidden max-h-24 text-gray-700 whitespace-pre-wrap"
-        >{{ p.content.slice(0, 200) }}{{ p.content.length > 200 ? '…' : '' }}</pre>
+          >{{ p.content.slice(0, 200) }}{{ p.content.length > 200 ? '…' : '' }}</pre>
 
         <div v-if="p.variables?.length" class="flex flex-wrap gap-1.5">
           <span v-for="v in p.variables" :key="v" class="badge bg-blue-50 text-blue-700">{{
@@ -114,7 +119,11 @@
               </div>
               <div>
                 <label class="label">Description</label>
-                <input v-model="form.description" class="input" placeholder="Optional short description" />
+                <input
+                  v-model="form.description"
+                  class="input"
+                  placeholder="Optional short description"
+                />
               </div>
               <div>
                 <label class="label">Content</label>
@@ -126,9 +135,20 @@
             </div>
             <div class="flex justify-end gap-3 mt-6">
               <button class="btn-secondary" @click="closeDialog">Cancel</button>
-              <button class="btn-primary" :disabled="saving || !form.name || !form.content" @click="save">
+              <button
+                class="btn-primary"
+                :disabled="saving || !form.name || !form.content"
+                @click="save"
+              >
                 <svg v-if="saving" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  />
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                 </svg>
                 {{ editingId ? 'Update' : 'Create' }}
@@ -152,7 +172,14 @@
 
             <div v-if="versionsLoading" class="flex justify-center py-8">
               <svg class="w-5 h-5 animate-spin text-blue-400" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                />
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
               </svg>
             </div>
@@ -179,7 +206,9 @@
                     </button>
                   </div>
                 </div>
-                <pre class="text-xs text-gray-600 bg-gray-50 rounded-lg p-2.5 max-h-28 overflow-hidden whitespace-pre-wrap">{{ v.content.slice(0, 300) }}{{ v.content.length > 300 ? '…' : '' }}</pre>
+                <pre
+                  class="text-xs text-gray-600 bg-gray-50 rounded-lg p-2.5 max-h-28 overflow-hidden whitespace-pre-wrap"
+                  >{{ v.content.slice(0, 300) }}{{ v.content.length > 300 ? '…' : '' }}</pre>
               </div>
             </div>
 
@@ -244,13 +273,15 @@ const categoryTabs: { label: string; value: PromptCategory | undefined; dot?: st
 ]
 
 function categoryStyle(cat: PromptCategory) {
-  return {
-    system: 'bg-gray-100 text-gray-600',
-    support: 'bg-blue-50 text-blue-700',
-    sales: 'bg-green-50 text-green-700',
-    marketing: 'bg-pink-50 text-pink-700',
-    general: 'bg-purple-50 text-purple-700',
-  }[cat] ?? 'bg-gray-100 text-gray-600'
+  return (
+    {
+      system: 'bg-gray-100 text-gray-600',
+      support: 'bg-blue-50 text-blue-700',
+      sales: 'bg-green-50 text-green-700',
+      marketing: 'bg-pink-50 text-pink-700',
+      general: 'bg-purple-50 text-purple-700',
+    }[cat] ?? 'bg-gray-100 text-gray-600'
+  )
 }
 
 async function load() {
@@ -277,7 +308,12 @@ function openCreate() {
 
 function openEdit(p: Prompt) {
   editingId.value = p.id
-  Object.assign(form, { name: p.name, description: p.description ?? '', content: p.content, category: p.category })
+  Object.assign(form, {
+    name: p.name,
+    description: p.description ?? '',
+    content: p.content,
+    category: p.category,
+  })
   dialog.value = true
 }
 

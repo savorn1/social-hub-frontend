@@ -11,8 +11,10 @@ export const useKnowledgeService = () => {
       http.post<KnowledgeBase>('/knowledge/bases', payload),
     addItem: (baseId: string, payload: { question: string; answer: string; tags?: string[] }) =>
       http.post<KnowledgeItem>(`/knowledge/bases/${baseId}/items`, payload),
-    updateItem: (id: string, payload: Partial<{ question: string; answer: string; tags: string[]; isActive: boolean }>) =>
-      http.patch<KnowledgeItem>(`/knowledge/items/${id}`, payload),
+    updateItem: (
+      id: string,
+      payload: Partial<{ question: string; answer: string; tags: string[]; isActive: boolean }>
+    ) => http.patch<KnowledgeItem>(`/knowledge/items/${id}`, payload),
     removeItem: (id: string) => http.delete(`/knowledge/items/${id}`),
     search: (q: string, baseId?: string) =>
       http.get<KnowledgeItem[]>('/knowledge/search', { params: { q, baseId } }),

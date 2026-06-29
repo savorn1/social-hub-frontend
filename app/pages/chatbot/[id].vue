@@ -29,7 +29,11 @@
             <option value="ar">Arabic (العربية)</option>
           </select>
           <p class="text-xs text-gray-400">
-            {{ language ? `Bot always replies in the selected language.` : 'Bot detects and mirrors the user\'s language automatically.' }}
+            {{
+              language
+                ? `Bot always replies in the selected language.`
+                : "Bot detects and mirrors the user's language automatically."
+            }}
           </p>
         </div>
       </div>
@@ -172,7 +176,10 @@ function setKeywords(step: FlowStep, raw: string) {
 async function save() {
   saving.value = true
   saved.value = false
-  await chatbotService.update(route.params.id as string, { flows: steps.value, language: language.value || undefined })
+  await chatbotService.update(route.params.id as string, {
+    flows: steps.value,
+    language: language.value || undefined,
+  })
   saving.value = false
   saved.value = true
   setTimeout(() => {

@@ -3,7 +3,9 @@
     <div class="flex items-center justify-between mb-6">
       <div>
         <h1 class="text-xl font-bold text-gray-900">Knowledge Base</h1>
-        <p class="text-sm text-gray-500 mt-0.5">Train your chatbots with Q&amp;A pairs and documents</p>
+        <p class="text-sm text-gray-500 mt-0.5">
+          Train your chatbots with Q&amp;A pairs and documents
+        </p>
       </div>
       <button class="btn-primary" @click="createBaseDialog = true">
         <PlusIcon class="w-4 h-4" /> New Base
@@ -32,7 +34,9 @@
         v-if="searchResults.length || searchQuery"
         class="text-xs text-gray-400 hover:text-gray-600"
         @click="clearSearch"
-      >Clear</button>
+      >
+        Clear
+      </button>
     </div>
 
     <!-- Search results -->
@@ -79,10 +83,7 @@
                 @change="(e) => onFileUpload(e, kb.id)"
               />
             </label>
-            <button
-              class="btn-secondary text-xs py-1.5"
-              @click="openAddItem(kb.id)"
-            >
+            <button class="btn-secondary text-xs py-1.5" @click="openAddItem(kb.id)">
               <PlusIcon class="w-3.5 h-3.5" /> Add Q&amp;A
             </button>
           </div>
@@ -94,7 +95,14 @@
           class="flex items-center gap-2 text-xs text-blue-600 bg-blue-50 rounded-lg px-3 py-2"
         >
           <svg class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            />
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
           </svg>
           Parsing &amp; embedding document…
@@ -127,9 +135,18 @@
               <p class="text-xs font-medium text-gray-700 truncate">{{ item.question }}</p>
               <p class="text-xs text-gray-400 truncate">{{ item.answer }}</p>
             </div>
-            <div class="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-              <button class="text-[11px] text-blue-600 hover:underline" @click="openEditItem(item)">Edit</button>
-              <button class="text-[11px] text-red-500 hover:underline" @click="deleteItem(item.id, kb.id)">Del</button>
+            <div
+              class="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+            >
+              <button class="text-[11px] text-blue-600 hover:underline" @click="openEditItem(item)">
+                Edit
+              </button>
+              <button
+                class="text-[11px] text-red-500 hover:underline"
+                @click="deleteItem(item.id, kb.id)"
+              >
+                Del
+              </button>
             </div>
           </div>
           <button
@@ -140,7 +157,9 @@
             View all {{ kb.items.length }} items →
           </button>
         </div>
-        <p v-else class="text-xs text-gray-400 italic">No items yet — add Q&amp;A or upload a document.</p>
+        <p v-else class="text-xs text-gray-400 italic">
+          No items yet — add Q&amp;A or upload a document.
+        </p>
       </div>
 
       <div v-if="!bases.length && !loading" class="md:col-span-2">
@@ -162,7 +181,9 @@
         <div class="fixed inset-0 bg-black/40" />
         <div class="fixed inset-0 flex items-center justify-center p-4">
           <DialogPanel class="card p-6 w-full max-w-md shadow-xl">
-            <DialogTitle class="text-base font-semibold text-gray-900 mb-4">New Knowledge Base</DialogTitle>
+            <DialogTitle class="text-base font-semibold text-gray-900 mb-4"
+              >New Knowledge Base</DialogTitle
+            >
             <div class="space-y-3">
               <div>
                 <label class="label">Name</label>
@@ -175,7 +196,9 @@
             </div>
             <div class="flex justify-end gap-3 mt-6">
               <button class="btn-secondary" @click="createBaseDialog = false">Cancel</button>
-              <button class="btn-primary" :disabled="!baseForm.name" @click="createBase">Create</button>
+              <button class="btn-primary" :disabled="!baseForm.name" @click="createBase">
+                Create
+              </button>
             </div>
           </DialogPanel>
         </div>
@@ -194,15 +217,30 @@
             <div class="space-y-3">
               <div>
                 <label class="label">Question</label>
-                <input v-model="itemForm.question" class="input" placeholder="e.g. What are your business hours?" />
+                <input
+                  v-model="itemForm.question"
+                  class="input"
+                  placeholder="e.g. What are your business hours?"
+                />
               </div>
               <div>
                 <label class="label">Answer</label>
-                <textarea v-model="itemForm.answer" class="input" rows="4" placeholder="e.g. We're open Mon–Fri 9am–6pm." />
+                <textarea
+                  v-model="itemForm.answer"
+                  class="input"
+                  rows="4"
+                  placeholder="e.g. We're open Mon–Fri 9am–6pm."
+                />
               </div>
               <div>
-                <label class="label">Tags <span class="text-gray-400 font-normal">(comma-separated)</span></label>
-                <input v-model="itemTagsRaw" class="input" placeholder="hours, schedule, availability" />
+                <label class="label"
+                  >Tags <span class="text-gray-400 font-normal">(comma-separated)</span></label
+                >
+                <input
+                  v-model="itemTagsRaw"
+                  class="input"
+                  placeholder="hours, schedule, availability"
+                />
               </div>
             </div>
             <div class="flex justify-end gap-3 mt-6">
@@ -213,7 +251,14 @@
                 @click="saveItem"
               >
                 <svg v-if="savingItem" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  />
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                 </svg>
                 {{ editingItemId ? 'Update' : 'Add' }}
@@ -230,7 +275,9 @@
         <div class="fixed inset-0 bg-black/40" />
         <div class="fixed inset-0 flex items-center justify-center p-4">
           <DialogPanel class="card p-6 w-full max-w-2xl shadow-xl max-h-[80vh] flex flex-col">
-            <DialogTitle class="text-base font-semibold text-gray-900 mb-1">{{ viewAllBase?.name }}</DialogTitle>
+            <DialogTitle class="text-base font-semibold text-gray-900 mb-1">{{
+              viewAllBase?.name
+            }}</DialogTitle>
             <p class="text-xs text-gray-400 mb-4">{{ viewAllBase?.items?.length }} items</p>
             <div class="flex-1 overflow-y-auto space-y-2 pr-1">
               <div
@@ -252,9 +299,18 @@
                   <p class="text-xs font-medium text-gray-800">{{ item.question }}</p>
                   <p class="text-xs text-gray-500 mt-0.5 line-clamp-2">{{ item.answer }}</p>
                 </div>
-                <div class="flex gap-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button class="text-xs text-blue-600 hover:underline" @click="openEditItem(item)">Edit</button>
-                  <button class="text-xs text-red-500 hover:underline" @click="deleteItem(item.id, viewAllBase!.id)">Del</button>
+                <div
+                  class="flex gap-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <button class="text-xs text-blue-600 hover:underline" @click="openEditItem(item)">
+                    Edit
+                  </button>
+                  <button
+                    class="text-xs text-red-500 hover:underline"
+                    @click="deleteItem(item.id, viewAllBase!.id)"
+                  >
+                    Del
+                  </button>
                 </div>
               </div>
             </div>
@@ -372,7 +428,9 @@ async function onFileUpload(e: Event, baseId: string) {
     uploadResult.value = result
     uploadResultBase.value = baseId
     await load()
-    setTimeout(() => { uploadResultBase.value = null }, 4000)
+    setTimeout(() => {
+      uploadResultBase.value = null
+    }, 4000)
   } finally {
     uploadingBase.value = null
   }
@@ -398,7 +456,10 @@ function openEditItem(item: KnowledgeItem) {
 async function saveItem() {
   savingItem.value = true
   try {
-    const tags = itemTagsRaw.value.split(',').map((t) => t.trim()).filter(Boolean)
+    const tags = itemTagsRaw.value
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean)
     if (editingItemId.value) {
       await knowledgeService.updateItem(editingItemId.value, { ...itemForm, tags })
     } else {

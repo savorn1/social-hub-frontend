@@ -1,4 +1,11 @@
-import type { Conversation, ConversationNote, Message, PaginatedResult, Platform, ConversationPriority } from '~/types'
+import type {
+  Conversation,
+  ConversationNote,
+  Message,
+  PaginatedResult,
+  Platform,
+  ConversationPriority,
+} from '~/types'
 import { useHttp } from '~/composables/useHttp'
 
 type CreateConversationPayload = {
@@ -45,10 +52,14 @@ export const useConversationService = () => {
       http.post<Message>('/conversations/messages', payload),
     sendReply: (conversationId: string, content: string, platform: Platform) => {
       if (platform === 'facebook') {
-        return http.post<Message>(`/integrations/facebook/conversations/${conversationId}/send`, { content })
+        return http.post<Message>(`/integrations/facebook/conversations/${conversationId}/send`, {
+          content,
+        })
       }
       if (platform === 'telegram') {
-        return http.post<Message>(`/integrations/telegram/conversations/${conversationId}/send`, { content })
+        return http.post<Message>(`/integrations/telegram/conversations/${conversationId}/send`, {
+          content,
+        })
       }
       return http.post<Message>('/conversations/messages', { conversationId, content })
     },
@@ -56,7 +67,6 @@ export const useConversationService = () => {
       http.get<ConversationNote[]>(`/conversations/${conversationId}/notes`),
     addNote: (conversationId: string, content: string) =>
       http.post<ConversationNote>(`/conversations/${conversationId}/notes`, { content }),
-    deleteNote: (noteId: string) =>
-      http.delete(`/conversations/notes/${noteId}`),
+    deleteNote: (noteId: string) => http.delete(`/conversations/notes/${noteId}`),
   }
 }

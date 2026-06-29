@@ -1,8 +1,16 @@
 import axios, { type InternalAxiosRequestConfig, type AxiosResponse } from 'axios'
 
 const SENSITIVE_KEYS = new Set([
-  'password', 'confirmpassword', 'accesstoken', 'refreshtoken',
-  'bottoken', 'token', 'secret', 'secrettoken', 'verifytoken', 'authorization',
+  'password',
+  'confirmpassword',
+  'accesstoken',
+  'refreshtoken',
+  'bottoken',
+  'token',
+  'secret',
+  'secrettoken',
+  'verifytoken',
+  'authorization',
 ])
 
 function sanitize(obj: unknown): unknown {
@@ -80,7 +88,8 @@ export default defineNuxtPlugin(() => {
       const url = res.config.url ?? ''
       const status = res.status
 
-      const color = status < 300 ? 'color:#22c55e' : status < 400 ? 'color:#f59e0b' : 'color:#ef4444'
+      const color =
+        status < 300 ? 'color:#22c55e' : status < 400 ? 'color:#f59e0b' : 'color:#ef4444'
       console.groupCollapsed(`%c[API] ${method} ${url} → ${status} +${ms}ms`, color)
       const data = res.data?.data ?? res.data
       if (data !== undefined && data !== null) {
@@ -97,8 +106,7 @@ export default defineNuxtPlugin(() => {
       const method = cfg.method?.toUpperCase() ?? ''
       const url = cfg.url ?? ''
       const status = error.response?.status ?? 'ERR'
-      const message =
-        error.response?.data?.message ?? error.message ?? 'Request failed'
+      const message = error.response?.data?.message ?? error.message ?? 'Request failed'
 
       console.groupCollapsed(`%c[API] ${method} ${url} → ${status} +${ms}ms`, 'color:#ef4444')
       console.error('error:', Array.isArray(message) ? message.join(', ') : message)

@@ -28,7 +28,6 @@ export const useFacebookService = () => {
       http.get<{ integration: string; status: string }>('/integrations/facebook/status'),
     syncPages: (userAccessToken: string) =>
       http.post<FacebookPage[]>('/integrations/facebook/sync-pages', { userAccessToken }),
-    getWebhookInfo: () =>
-      http.get<FacebookWebhookInfo>('/integrations/facebook/webhook/info'),
+    getWebhookInfo: () => http.get<FacebookWebhookInfo>('/integrations/facebook/webhook/info'),
   }
 }

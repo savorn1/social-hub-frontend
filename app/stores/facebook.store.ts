@@ -1,6 +1,10 @@
 import { defineStore } from 'pinia'
 import type { Inbox } from '~/types'
-import { useFacebookService, type FacebookPage, type FacebookWebhookInfo } from '~/services/facebook.service'
+import {
+  useFacebookService,
+  type FacebookPage,
+  type FacebookWebhookInfo,
+} from '~/services/facebook.service'
 
 export const useFacebookStore = defineStore('facebook', () => {
   const facebookService = useFacebookService()

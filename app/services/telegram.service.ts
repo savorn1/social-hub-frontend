@@ -30,12 +30,14 @@ export const useTelegramService = () => {
       }),
     updateInbox: (id: string, payload: { isActive?: boolean }) =>
       http.patch<Inbox>(`/integrations/telegram/inboxes/${id}`, payload),
-    deleteInbox: (id: string) =>
-      http.delete(`/integrations/telegram/inboxes/${id}`),
+    deleteInbox: (id: string) => http.delete(`/integrations/telegram/inboxes/${id}`),
     validateBot: (botToken: string) =>
       http.post<TelegramBotInfo>('/integrations/telegram/bots/validate', { botToken }),
     setWebhook: (inboxId: string) =>
-      http.post<{ success: boolean; webhookUrl: string }>(`/integrations/telegram/inboxes/${inboxId}/set-webhook`, {}),
+      http.post<{ success: boolean; webhookUrl: string }>(
+        `/integrations/telegram/inboxes/${inboxId}/set-webhook`,
+        {}
+      ),
     deleteWebhook: (inboxId: string) =>
       http.delete(`/integrations/telegram/inboxes/${inboxId}/webhook`),
     getWebhookInfo: (inboxId: string) =>

@@ -17,7 +17,9 @@
         <!-- Bot header -->
         <div class="flex items-start justify-between">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-sky-500 flex items-center justify-center flex-shrink-0">
+            <div
+              class="w-10 h-10 rounded-xl bg-sky-500 flex items-center justify-center flex-shrink-0"
+            >
               <PaperAirplaneIcon class="w-5 h-5 text-white" />
             </div>
             <div>
@@ -43,8 +45,13 @@
         </div>
 
         <!-- Webhook status -->
-        <div class="rounded-lg border p-3 space-y-2"
-          :class="webhookInfos[inbox.id]?.isRegistered ? 'border-green-200 bg-green-50' : 'border-amber-200 bg-amber-50'"
+        <div
+          class="rounded-lg border p-3 space-y-2"
+          :class="
+            webhookInfos[inbox.id]?.isRegistered
+              ? 'border-green-200 bg-green-50'
+              : 'border-amber-200 bg-amber-50'
+          "
         >
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-1.5">
@@ -52,7 +59,8 @@
                 class="w-2 h-2 rounded-full"
                 :class="webhookInfos[inbox.id]?.isRegistered ? 'bg-green-500' : 'bg-amber-400'"
               />
-              <span class="text-xs font-medium"
+              <span
+                class="text-xs font-medium"
                 :class="webhookInfos[inbox.id]?.isRegistered ? 'text-green-700' : 'text-amber-700'"
               >
                 {{ webhookInfos[inbox.id]?.isRegistered ? 'Webhook Active' : 'Webhook Not Set' }}
@@ -60,21 +68,35 @@
             </div>
             <button
               class="text-xs font-medium px-2 py-0.5 rounded-md transition-colors"
-              :class="webhookInfos[inbox.id]?.isRegistered
-                ? 'text-red-600 hover:bg-red-50'
-                : 'text-sky-600 hover:bg-sky-100'"
-              @click="webhookInfos[inbox.id]?.isRegistered ? removeWebhook(inbox.id) : registerWebhook(inbox.id)"
+              :class="
+                webhookInfos[inbox.id]?.isRegistered
+                  ? 'text-red-600 hover:bg-red-50'
+                  : 'text-sky-600 hover:bg-sky-100'
+              "
+              @click="
+                webhookInfos[inbox.id]?.isRegistered
+                  ? removeWebhook(inbox.id)
+                  : registerWebhook(inbox.id)
+              "
             >
               {{ webhookInfos[inbox.id]?.isRegistered ? 'Remove' : 'Set Webhook' }}
             </button>
           </div>
 
           <div v-if="webhookInfos[inbox.id]?.isRegistered">
-            <p class="text-[11px] text-green-600 font-mono truncate">{{ webhookInfos[inbox.id].url }}</p>
-            <p v-if="webhookInfos[inbox.id]?.pending_update_count > 0" class="text-[11px] text-amber-600 mt-0.5">
+            <p class="text-[11px] text-green-600 font-mono truncate">
+              {{ webhookInfos[inbox.id].url }}
+            </p>
+            <p
+              v-if="webhookInfos[inbox.id]?.pending_update_count > 0"
+              class="text-[11px] text-amber-600 mt-0.5"
+            >
               {{ webhookInfos[inbox.id].pending_update_count }} pending updates
             </p>
-            <p v-if="webhookInfos[inbox.id]?.last_error_message" class="text-[11px] text-red-600 mt-0.5">
+            <p
+              v-if="webhookInfos[inbox.id]?.last_error_message"
+              class="text-[11px] text-red-600 mt-0.5"
+            >
               Error: {{ webhookInfos[inbox.id].last_error_message }}
             </p>
           </div>
@@ -121,7 +143,10 @@
       <h2 class="text-sm font-semibold text-gray-700 mb-3">Setup Guide</h2>
       <ol class="space-y-2">
         <li v-for="(step, i) in setupSteps" :key="i" class="flex gap-2.5 text-sm text-gray-600">
-          <span class="flex-shrink-0 w-5 h-5 rounded-full bg-sky-100 text-sky-700 text-xs font-bold flex items-center justify-center mt-0.5">{{ i + 1 }}</span>
+          <span
+            class="flex-shrink-0 w-5 h-5 rounded-full bg-sky-100 text-sky-700 text-xs font-bold flex items-center justify-center mt-0.5"
+            >{{ i + 1 }}</span
+          >
           <span>{{ step }}</span>
         </li>
       </ol>
@@ -130,13 +155,29 @@
     <!-- Connect Bot Dialog -->
     <TransitionRoot :show="connectDialog" as="template">
       <Dialog class="relative z-50" @close="closeConnectDialog">
-        <TransitionChild enter="ease-out duration-200" enter-from="opacity-0" enter-to="opacity-100" leave="ease-in duration-150" leave-from="opacity-100" leave-to="opacity-0">
+        <TransitionChild
+          enter="ease-out duration-200"
+          enter-from="opacity-0"
+          enter-to="opacity-100"
+          leave="ease-in duration-150"
+          leave-from="opacity-100"
+          leave-to="opacity-0"
+        >
           <div class="fixed inset-0 bg-black/40" />
         </TransitionChild>
         <div class="fixed inset-0 flex items-center justify-center p-4">
-          <TransitionChild enter="ease-out duration-200" enter-from="opacity-0 scale-95" enter-to="opacity-100 scale-100" leave="ease-in duration-150" leave-from="opacity-100 scale-100" leave-to="opacity-0 scale-95">
+          <TransitionChild
+            enter="ease-out duration-200"
+            enter-from="opacity-0 scale-95"
+            enter-to="opacity-100 scale-100"
+            leave="ease-in duration-150"
+            leave-from="opacity-100 scale-100"
+            leave-to="opacity-0 scale-95"
+          >
             <DialogPanel class="card p-6 w-full max-w-md shadow-xl">
-              <DialogTitle class="text-base font-semibold text-gray-900 mb-4">Connect Telegram Bot</DialogTitle>
+              <DialogTitle class="text-base font-semibold text-gray-900 mb-4"
+                >Connect Telegram Bot</DialogTitle
+              >
 
               <div class="rounded-lg bg-sky-50 border border-sky-200 p-3 mb-4 text-sm text-sky-700">
                 Create a bot with <strong>@BotFather</strong> on Telegram and paste the token below.
@@ -167,8 +208,13 @@
                 </div>
 
                 <!-- Validated bot preview -->
-                <div v-if="validatedBot" class="rounded-lg bg-green-50 border border-green-200 p-3 flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-full bg-sky-500 flex items-center justify-center flex-shrink-0">
+                <div
+                  v-if="validatedBot"
+                  class="rounded-lg bg-green-50 border border-green-200 p-3 flex items-center gap-3"
+                >
+                  <div
+                    class="w-8 h-8 rounded-full bg-sky-500 flex items-center justify-center flex-shrink-0"
+                  >
                     <PaperAirplaneIcon class="w-4 h-4 text-white" />
                   </div>
                   <div>
@@ -185,7 +231,14 @@
                 >
                   <span v-if="validating" class="flex items-center gap-2 justify-center">
                     <svg class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                      <circle
+                        class="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        stroke-width="4"
+                      />
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                     </svg>
                     Validating…

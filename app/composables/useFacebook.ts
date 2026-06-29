@@ -26,7 +26,9 @@ export function useFacebook() {
   async function connectPage(page: { id: string; name: string; access_token: string }) {
     const alreadyConnected = store.inboxes.some((i) => i.pageId === page.id)
     if (alreadyConnected) return
-    return request(() => store.createInbox({ name: page.name, pageId: page.id, accessToken: page.access_token }))
+    return request(() =>
+      store.createInbox({ name: page.name, pageId: page.id, accessToken: page.access_token })
+    )
   }
 
   return {
