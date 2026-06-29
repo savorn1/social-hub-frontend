@@ -45,6 +45,7 @@ export interface Permission {
 // ─── Conversation ────────────────────────────────────────────────────────────
 export type Platform = 'facebook' | 'telegram' | 'instagram' | 'whatsapp' | 'web'
 export type ConversationStatus = 'open' | 'pending' | 'resolved' | 'closed'
+export type ConversationPriority = 'urgent' | 'high' | 'normal' | 'low'
 export type MessageType = 'text' | 'image' | 'video' | 'file' | 'audio' | 'location' | 'template'
 export type MessageStatus = 'sent' | 'delivered' | 'read' | 'failed'
 
@@ -52,6 +53,7 @@ export interface Conversation {
   id: string
   platform: Platform
   status: ConversationStatus
+  priority: ConversationPriority
   contactName?: string
   contactId?: string
   pageId?: string
@@ -63,8 +65,19 @@ export interface Conversation {
   csatComment?: string
   csatSentAt?: string
   handoverMode: boolean
+  isArchived: boolean
   messages?: Message[]
   metadata?: Record<string, unknown>
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ConversationNote {
+  id: string
+  conversationId: string
+  authorId?: string
+  author?: User
+  content: string
   createdAt: string
   updatedAt: string
 }

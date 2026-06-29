@@ -97,8 +97,144 @@
       </div>
     </div>
 
+    <!-- Secondary action bar -->
+    <div class="flex items-center gap-2 px-4 py-2 border-b border-gray-100 bg-white flex-shrink-0 flex-wrap">
+      <!-- Tab switcher -->
+      <div class="flex rounded-lg border border-gray-200 overflow-hidden text-xs mr-2">
+        <button
+          class="px-3 py-1.5 font-medium transition-colors"
+          :class="activeTab === 'chat' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50'"
+          @click="activeTab = 'chat'"
+        >
+          Chat
+        </button>
+        <button
+          class="px-3 py-1.5 font-medium transition-colors"
+          :class="activeTab === 'notes' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50'"
+          @click="activeTab = 'notes'"
+        >
+          Notes
+        </button>
+      </div>
+
+      <!-- Priority dropdown -->
+      <div ref="priorityRef" class="relative">
+        <button
+          class="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border font-medium transition-colors"
+          :class="priorityClass(conversation.priority)"
+          @click="priorityOpen = !priorityOpen"
+        >
+          <FlagIcon class="w-3 h-3" />
+          {{ capitalize(conversation.priority ?? 'normal') }}
+          <ChevronDownIcon class="w-3 h-3 opacity-60" />
+        </button>
+        <div
+          v-if="priorityOpen"
+          class="absolute left-0 top-full mt-1 w-36 bg-white border border-gray-200 rounded-xl shadow-lg z-20 overflow-hidden"
+        >
+          <button
+            v-for="p in priorities"
+            :key="p.value"
+            class="w-full text-left px-3 py-2 text-xs flex items-center gap-2 hover:bg-gray-50"
+            :class="p.color"
+            @click="setPriority(p.value)"
+          >
+            <FlagIcon class="w-3 h-3" />
+            {{ p.label }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Labels -->
+      <div class="flex items-center gap-1 flex-wrap">
+        <span
+          v-for="label in conversation.labels"
+          :key="label"
+          class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 font-medium"
+        >
+          {{ label }}
+          <button class="hover:text-purple-900" @click="removeLabel(label)">×</button>
+        </span>
+        <div ref="labelRef" class="relative">
+          <button
+            class="text-[11px] px-2 py-0.5 rounded-full border border-dashed border-gray-300 text-gray-400 hover:border-gray-400 hover:text-gray-600 transition-colors"
+            @click="labelInputOpen = !labelInputOpen"
+          >
+            + label
+          </button>
+          <div
+            v-if="labelInputOpen"
+            class="absolute left-0 top-full mt-1 z-20 bg-white border border-gray-200 rounded-xl shadow-lg p-2 w-44"
+          >
+            <input
+              ref="labelInputEl"
+              v-model="newLabel"
+              class="input text-xs w-full"
+              placeholder="Tag name, Enter"
+              @keydown.enter.prevent="confirmLabel"
+              @keydown.esc="labelInputOpen = false"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="flex-1" />
+
+      <!-- Archive button -->
+      <button
+        class="text-xs px-2.5 py-1.5 rounded-lg border border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-700 flex items-center gap-1.5 transition-colors"
+        :title="conversation.isArchived ? 'Unarchive' : 'Archive conversation'"
+        @click="emit('archive', !conversation.isArchived)"
+      >
+        <ArchiveBoxIcon class="w-3.5 h-3.5" />
+        {{ conversation.isArchived ? 'Unarchive' : 'Archive' }}
+      </button>
+    </div>
+
+    <!-- Notes panel -->
+    <div v-if="activeTab === 'notes'" class="flex flex-col flex-1 overflow-hidden bg-amber-50/40">
+      <div class="flex-1 overflow-y-auto px-5 py-4 space-y-3">
+        <p v-if="!store.notes.length" class="text-sm text-gray-400 text-center mt-8">
+          No internal notes yet
+        </p>
+        <div
+          v-for="note in store.notes"
+          :key="note.id"
+          class="bg-white border border-amber-200 rounded-xl px-4 py-3 shadow-sm"
+        >
+          <p class="text-sm text-gray-800 whitespace-pre-wrap">{{ note.content }}</p>
+          <div class="flex items-center justify-between mt-2">
+            <span class="text-[11px] text-gray-400">{{ formatDate(note.createdAt) }}</span>
+            <button
+              class="text-[11px] text-red-400 hover:text-red-600"
+              @click="store.deleteNote(note.id)"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-2 px-4 py-3 border-t border-amber-200 bg-white flex-shrink-0">
+        <textarea
+          v-model="noteDraft"
+          rows="2"
+          placeholder="Write an internal note… (visible to agents only)"
+          class="flex-1 input resize-none text-sm"
+          style="field-sizing: content"
+          @keydown.ctrl.enter.prevent="submitNote"
+        />
+        <button
+          class="btn-primary py-2 px-3 flex-shrink-0 self-end"
+          :disabled="!noteDraft.trim()"
+          @click="submitNote"
+        >
+          <PaperAirplaneIcon class="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+
     <!-- Messages -->
-    <div ref="scrollEl" class="flex-1 overflow-y-auto px-5 py-4 space-y-4 bg-gray-50/70">
+    <div v-else ref="scrollEl" class="flex-1 overflow-y-auto px-5 py-4 space-y-4 bg-gray-50/70">
       <div
         v-for="msg in messages"
         :key="msg.id"
@@ -177,7 +313,7 @@
 
     <!-- Canned responses picker -->
     <div
-      v-if="cannedOpen && activePrompts.length"
+      v-if="activeTab === 'chat' && cannedOpen && activePrompts.length"
       class="border-t border-gray-100 bg-white max-h-40 overflow-y-auto"
     >
       <p class="px-4 pt-2 pb-1 text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
@@ -195,7 +331,7 @@
     </div>
 
     <!-- Input -->
-    <div class="flex items-end gap-2 px-4 py-3 border-t border-gray-200 bg-white flex-shrink-0">
+    <div v-if="activeTab === 'chat'" class="flex items-end gap-2 px-4 py-3 border-t border-gray-200 bg-white flex-shrink-0">
       <input ref="fileInput" type="file" class="hidden" @change="onFileChange" />
       <button
         class="flex-shrink-0 p-2 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
@@ -235,9 +371,13 @@
 
 <script setup lang="ts">
 import { PaperAirplaneIcon } from '@heroicons/vue/24/solid'
-import { UserIcon, BoltIcon, PaperClipIcon, CpuChipIcon } from '@heroicons/vue/24/outline'
-import type { Conversation, Message, User, Prompt } from '~/types'
+import {
+  UserIcon, BoltIcon, PaperClipIcon, CpuChipIcon,
+  FlagIcon, ChevronDownIcon, ArchiveBoxIcon,
+} from '@heroicons/vue/24/outline'
+import type { Conversation, ConversationPriority, Message, User, Prompt } from '~/types'
 import { platformColor, formatDate, truncate, initials } from '~/utils'
+import { useInboxStore } from '~/stores/inbox.store'
 
 const props = defineProps<{
   conversation: Conversation
@@ -250,22 +390,88 @@ const emit = defineEmits<{
   updateStatus: [status: string]
   assign: [agentId: string | null]
   toggleHandover: [handoverMode: boolean]
+  setPriority: [priority: ConversationPriority]
+  setLabels: [labels: string[]]
+  archive: [isArchived: boolean]
   typing: []
   stopTyping: []
 }>()
 
 const config = useRuntimeConfig()
 const mediaBase = config.public.baseUrl as string
+const store = useInboxStore()
 
 const draft = ref('')
+const noteDraft = ref('')
+const activeTab = ref<'chat' | 'notes'>('chat')
 const scrollEl = ref<HTMLElement>()
 const fileInput = ref<HTMLInputElement>()
 const assignRef = ref<HTMLElement>()
+const priorityRef = ref<HTMLElement>()
+const labelRef = ref<HTMLElement>()
+const labelInputEl = ref<HTMLInputElement>()
 const assignOpen = ref(false)
+const priorityOpen = ref(false)
+const labelInputOpen = ref(false)
+const newLabel = ref('')
 const cannedOpen = ref(false)
 const agents = ref<User[]>([])
 const agentsLoading = ref(false)
 const activePrompts = ref<Prompt[]>([])
+
+const priorities = [
+  { value: 'urgent', label: 'Urgent', color: 'text-red-600' },
+  { value: 'high', label: 'High', color: 'text-orange-600' },
+  { value: 'normal', label: 'Normal', color: 'text-blue-600' },
+  { value: 'low', label: 'Low', color: 'text-gray-500' },
+]
+
+function priorityClass(p?: string) {
+  if (p === 'urgent') return 'bg-red-50 text-red-700 border-red-200'
+  if (p === 'high') return 'bg-orange-50 text-orange-700 border-orange-200'
+  if (p === 'low') return 'bg-gray-50 text-gray-500 border-gray-200'
+  return 'bg-blue-50 text-blue-700 border-blue-200'
+}
+
+function capitalize(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
+function setPriority(value: string) {
+  emit('setPriority', value as ConversationPriority)
+  priorityOpen.value = false
+}
+
+function removeLabel(label: string) {
+  const labels = (props.conversation.labels ?? []).filter((l) => l !== label)
+  emit('setLabels', labels)
+}
+
+async function confirmLabel() {
+  const tag = newLabel.value.trim()
+  if (!tag) return
+  const labels = [...(props.conversation.labels ?? []), tag]
+  emit('setLabels', labels)
+  newLabel.value = ''
+  labelInputOpen.value = false
+}
+
+async function submitNote() {
+  if (!noteDraft.value.trim()) return
+  await store.addNote(props.conversation.id, noteDraft.value.trim())
+  noteDraft.value = ''
+}
+
+watch(activeTab, async (tab) => {
+  if (tab === 'notes') await store.fetchNotes(props.conversation.id)
+})
+
+watch(labelInputOpen, async (open) => {
+  if (open) {
+    await nextTick()
+    labelInputEl.value?.focus()
+  }
+})
 
 const statuses = [
   { label: 'Open', value: 'open' },
@@ -357,12 +563,13 @@ function onBlur() {
   }
 }
 
-// Close assign dropdown on outside click
+// Close dropdowns on outside click
 onMounted(() => {
   document.addEventListener('click', (e) => {
-    if (assignRef.value && !assignRef.value.contains(e.target as Node)) {
-      assignOpen.value = false
-    }
+    const target = e.target as Node
+    if (assignRef.value && !assignRef.value.contains(target)) assignOpen.value = false
+    if (priorityRef.value && !priorityRef.value.contains(target)) priorityOpen.value = false
+    if (labelRef.value && !labelRef.value.contains(target)) labelInputOpen.value = false
   })
 })
 

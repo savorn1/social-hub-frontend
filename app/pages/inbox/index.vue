@@ -19,6 +19,21 @@
         </button>
       </div>
 
+      <!-- Archive toggle -->
+      <div class="flex items-center justify-between px-3 py-1.5 border-b border-gray-100">
+        <span class="text-xs text-gray-500">Archived</span>
+        <button
+          class="relative inline-flex h-4 w-8 items-center rounded-full transition-colors"
+          :class="store.showArchived ? 'bg-blue-600' : 'bg-gray-200'"
+          @click="toggleArchived"
+        >
+          <span
+            class="inline-block h-3 w-3 transform rounded-full bg-white shadow transition-transform"
+            :class="store.showArchived ? 'translate-x-4' : 'translate-x-0.5'"
+          />
+        </button>
+      </div>
+
       <!-- Platform pills -->
       <div class="flex gap-1.5 px-3 py-2 border-b border-gray-100 overflow-x-auto scrollbar-thin">
         <button
@@ -65,6 +80,9 @@
         @update-status="(s) => store.updateStatus(store.activeConversation!.id, s)"
         @assign="(agentId) => store.assign(store.activeConversation!.id, agentId)"
         @toggle-handover="(mode) => store.toggleHandover(store.activeConversation!.id, mode)"
+        @set-priority="(p) => store.setPriority(store.activeConversation!.id, p)"
+        @set-labels="(labels) => store.setLabels(store.activeConversation!.id, labels)"
+        @archive="(isArchived) => store.archive(store.activeConversation!.id, isArchived)"
         @typing="emitTyping"
         @stop-typing="emitStopTyping"
       />
@@ -110,6 +128,11 @@ const platformOptions = [
 
 function setStatus(value: string | undefined) {
   store.statusFilter = value
+  store.fetchConversations(true)
+}
+
+function toggleArchived() {
+  store.showArchived = !store.showArchived
   store.fetchConversations(true)
 }
 

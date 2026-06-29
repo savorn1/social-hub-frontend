@@ -45,7 +45,7 @@
               timeAgo(conv.updatedAt)
             }}</span>
           </div>
-          <div class="flex items-center gap-1.5 mt-1">
+          <div class="flex items-center gap-1.5 mt-1 flex-wrap">
             <PlatformBadge :platform="conv.platform" />
             <StatusBadge :status="conv.status" />
             <span
@@ -53,6 +53,17 @@
               class="inline-flex items-center gap-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700"
             >
               <CpuChipIcon class="w-2.5 h-2.5" /> Human
+            </span>
+            <span
+              v-if="conv.priority && conv.priority !== 'normal'"
+              class="text-[10px] font-medium px-1.5 py-0.5 rounded-full"
+              :class="{
+                'bg-red-100 text-red-700': conv.priority === 'urgent',
+                'bg-orange-100 text-orange-700': conv.priority === 'high',
+                'bg-gray-100 text-gray-500': conv.priority === 'low',
+              }"
+            >
+              {{ conv.priority }}
             </span>
           </div>
         </div>

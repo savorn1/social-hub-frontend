@@ -1,4 +1,4 @@
-import type { Conversation, Message, PaginatedResult, Platform } from '~/types'
+import type { Conversation, ConversationNote, Message, PaginatedResult, Platform, ConversationPriority } from '~/types'
 import { useHttp } from '~/composables/useHttp'
 
 type CreateConversationPayload = {
@@ -10,7 +10,14 @@ type CreateConversationPayload = {
 }
 
 type CreateMessagePayload = { conversationId: string; content: string; type?: string }
-type UpdateConversationPayload = { status?: string; assignedAgentId?: string; handoverMode?: boolean }
+type UpdateConversationPayload = {
+  status?: string
+  assignedAgentId?: string
+  handoverMode?: boolean
+  priority?: ConversationPriority
+  labels?: string[]
+  isArchived?: boolean
+}
 
 export const useConversationService = () => {
   const http = useHttp()
@@ -22,7 +29,9 @@ export const useConversationService = () => {
         limit?: number
         platform?: string
         status?: string
+        priority?: string
         search?: string
+        isArchived?: boolean
       } = {}
     ) => http.get<PaginatedResult<Conversation>>('/conversations', { params }),
     findOne: (id: string) => http.get<Conversation>(`/conversations/${id}`),
@@ -43,5 +52,11 @@ export const useConversationService = () => {
       }
       return http.post<Message>('/conversations/messages', { conversationId, content })
     },
+    getNotes: (conversationId: string) =>
+      http.get<ConversationNote[]>(`/conversations/${conversationId}/notes`),
+    addNote: (conversationId: string, content: string) =>
+      http.post<ConversationNote>(`/conversations/${conversationId}/notes`, { content }),
+    deleteNote: (noteId: string) =>
+      http.delete(`/conversations/notes/${noteId}`),
   }
 }
