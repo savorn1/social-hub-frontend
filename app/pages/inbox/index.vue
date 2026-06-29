@@ -64,6 +64,7 @@
         @send="store.sendMessage"
         @update-status="(s) => store.updateStatus(store.activeConversation!.id, s)"
         @assign="(agentId) => store.assign(store.activeConversation!.id, agentId)"
+        @toggle-handover="(mode) => store.toggleHandover(store.activeConversation!.id, mode)"
         @typing="emitTyping"
         @stop-typing="emitStopTyping"
       />

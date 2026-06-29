@@ -15,7 +15,7 @@ export const useChatbotService = () => {
     }) => http.post<Chatbot>('/chatbot', payload),
     update: (
       id: string,
-      payload: Partial<{ name: string; description: string; isActive: boolean; flows: unknown[] }>
+      payload: Partial<{ name: string; description: string; isActive: boolean; flows: unknown[]; language: string }>
     ) => http.patch<Chatbot>(`/chatbot/${id}`, payload),
     remove: (id: string) => http.delete(`/chatbot/${id}`),
   }

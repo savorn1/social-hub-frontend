@@ -23,6 +23,19 @@
         </div>
       </div>
 
+      <!-- Human handover toggle -->
+      <button
+        class="text-xs px-2.5 py-1.5 rounded-lg border font-medium transition-all flex items-center gap-1.5"
+        :class="conversation.handoverMode
+          ? 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100'
+          : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300 hover:text-gray-700'"
+        :title="conversation.handoverMode ? 'Bot is paused — click to return control to bot' : 'Take over from bot'"
+        @click="emit('toggleHandover', !conversation.handoverMode)"
+      >
+        <CpuChipIcon class="w-3.5 h-3.5" />
+        {{ conversation.handoverMode ? 'Return to Bot' : 'Take Over' }}
+      </button>
+
       <!-- Assign agent -->
       <div ref="assignRef" class="relative">
         <button
@@ -222,7 +235,7 @@
 
 <script setup lang="ts">
 import { PaperAirplaneIcon } from '@heroicons/vue/24/solid'
-import { UserIcon, BoltIcon, PaperClipIcon } from '@heroicons/vue/24/outline'
+import { UserIcon, BoltIcon, PaperClipIcon, CpuChipIcon } from '@heroicons/vue/24/outline'
 import type { Conversation, Message, User, Prompt } from '~/types'
 import { platformColor, formatDate, truncate, initials } from '~/utils'
 
@@ -236,6 +249,7 @@ const emit = defineEmits<{
   send: [content: string]
   updateStatus: [status: string]
   assign: [agentId: string | null]
+  toggleHandover: [handoverMode: boolean]
   typing: []
   stopTyping: []
 }>()

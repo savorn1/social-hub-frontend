@@ -77,6 +77,13 @@ export const useInboxStore = defineStore('inbox', () => {
     if (activeConversation.value?.id === id) activeConversation.value = updated
   }
 
+  async function toggleHandover(id: string, handoverMode: boolean) {
+    const updated = await conversationService.update(id, { handoverMode })
+    const idx = conversations.value.findIndex((c) => c.id === id)
+    if (idx !== -1) conversations.value[idx] = updated
+    if (activeConversation.value?.id === id) activeConversation.value = updated
+  }
+
   function setTyping(user: { userId?: string; userName?: string }) {
     if (!typingUsers.value.find((u) => u.userId === user.userId)) {
       typingUsers.value.push(user)
@@ -104,6 +111,7 @@ export const useInboxStore = defineStore('inbox', () => {
     pushMessage,
     updateStatus,
     assign,
+    toggleHandover,
     setTyping,
     clearTyping,
   }

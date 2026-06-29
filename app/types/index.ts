@@ -62,6 +62,7 @@ export interface Conversation {
   csatScore?: number
   csatComment?: string
   csatSentAt?: string
+  handoverMode: boolean
   messages?: Message[]
   metadata?: Record<string, unknown>
   createdAt: string
@@ -110,20 +111,34 @@ export interface KnowledgeItem {
   question: string
   answer: string
   tags?: string[]
+  source?: string
+  sourceType?: string
   isActive: boolean
   createdAt: string
 }
 
 // ─── Prompt ──────────────────────────────────────────────────────────────────
+export type PromptCategory = 'system' | 'sales' | 'support' | 'marketing' | 'general'
+
 export interface Prompt {
   id: string
   name: string
   description?: string
   content: string
+  category: PromptCategory
   variables?: string[]
   isActive: boolean
+  currentVersion: number
   createdAt: string
   updatedAt: string
+}
+
+export interface PromptVersion {
+  id: string
+  promptId: string
+  version: number
+  content: string
+  createdAt: string
 }
 
 // ─── Chatbot ─────────────────────────────────────────────────────────────────
@@ -134,6 +149,7 @@ export interface Chatbot {
   isActive: boolean
   knowledgeBaseId?: string
   promptId?: string
+  language?: string
   flows: Record<string, unknown>[]
   createdAt: string
   updatedAt: string

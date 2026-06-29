@@ -10,7 +10,7 @@ type CreateConversationPayload = {
 }
 
 type CreateMessagePayload = { conversationId: string; content: string; type?: string }
-type UpdateConversationPayload = { status?: string; assignedAgentId?: string }
+type UpdateConversationPayload = { status?: string; assignedAgentId?: string; handoverMode?: boolean }
 
 export const useConversationService = () => {
   const http = useHttp()

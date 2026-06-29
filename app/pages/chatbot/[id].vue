@@ -11,6 +11,29 @@
     <div v-if="loading" class="text-sm text-gray-400">Loading…</div>
 
     <template v-else-if="bot">
+      <!-- Language setting -->
+      <div class="card p-5 mb-6">
+        <h2 class="text-sm font-semibold text-gray-700 mb-3">Language</h2>
+        <div class="flex items-center gap-3">
+          <select v-model="language" class="input w-56 text-sm">
+            <option value="">Auto-detect from user message</option>
+            <option value="en">English</option>
+            <option value="km">Khmer (ភាសាខ្មែរ)</option>
+            <option value="zh">Chinese (中文)</option>
+            <option value="ja">Japanese (日本語)</option>
+            <option value="ko">Korean (한국어)</option>
+            <option value="th">Thai (ภาษาไทย)</option>
+            <option value="vi">Vietnamese (Tiếng Việt)</option>
+            <option value="fr">French (Français)</option>
+            <option value="es">Spanish (Español)</option>
+            <option value="ar">Arabic (العربية)</option>
+          </select>
+          <p class="text-xs text-gray-400">
+            {{ language ? `Bot always replies in the selected language.` : 'Bot detects and mirrors the user\'s language automatically.' }}
+          </p>
+        </div>
+      </div>
+
       <!-- Flow Steps -->
       <div class="space-y-4 mb-6">
         <div v-for="(step, i) in steps" :key="i" class="card p-5 space-y-4">
@@ -118,6 +141,7 @@ const chatbotService = useChatbotService()
 
 const bot = ref<Chatbot | null>(null)
 const steps = ref<FlowStep[]>([])
+const language = ref('')
 const loading = ref(true)
 const saving = ref(false)
 const saved = ref(false)
@@ -126,6 +150,7 @@ onMounted(async () => {
   const data = await chatbotService.findOne(route.params.id as string)
   bot.value = data
   steps.value = (data.flows ?? []).map((s) => ({ ...(s as unknown as FlowStep) }))
+  language.value = data.language ?? ''
   loading.value = false
 })
 
@@ -147,7 +172,7 @@ function setKeywords(step: FlowStep, raw: string) {
 async function save() {
   saving.value = true
   saved.value = false
-  await chatbotService.update(route.params.id as string, { flows: steps.value })
+  await chatbotService.update(route.params.id as string, { flows: steps.value, language: language.value || undefined })
   saving.value = false
   saved.value = true
   setTimeout(() => {

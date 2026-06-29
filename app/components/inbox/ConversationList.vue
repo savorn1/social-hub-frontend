@@ -48,6 +48,12 @@
           <div class="flex items-center gap-1.5 mt-1">
             <PlatformBadge :platform="conv.platform" />
             <StatusBadge :status="conv.status" />
+            <span
+              v-if="conv.handoverMode"
+              class="inline-flex items-center gap-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700"
+            >
+              <CpuChipIcon class="w-2.5 h-2.5" /> Human
+            </span>
           </div>
         </div>
       </button>
@@ -74,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { InboxIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
+import { InboxIcon, MagnifyingGlassIcon, CpuChipIcon } from '@heroicons/vue/24/outline'
 import type { Conversation } from '~/types'
 import { platformColor, timeAgo } from '~/utils'
 
