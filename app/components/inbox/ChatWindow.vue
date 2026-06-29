@@ -1,0 +1,366 @@
+<template>
+  <div class="flex flex-col h-full">
+    <!-- Header -->
+    <div
+      class="flex items-center gap-3 px-5 py-3.5 border-b border-gray-200 bg-white flex-shrink-0 shadow-sm"
+    >
+      <div
+        class="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 ring-2 ring-white shadow"
+        :class="platformColor(conversation.platform)"
+      >
+        {{ (conversation.contactName || conversation.contactId || '?').charAt(0).toUpperCase() }}
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-semibold text-gray-900 truncate">
+          {{ conversation.contactName || conversation.contactId }}
+        </p>
+        <div class="flex items-center gap-2 mt-0.5">
+          <PlatformBadge :platform="conversation.platform" />
+          <StatusBadge :status="conversation.status" />
+          <span v-if="conversation.assignedAgent" class="text-[11px] text-gray-400">
+            → {{ conversation.assignedAgent.firstName }} {{ conversation.assignedAgent.lastName }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Assign agent -->
+      <div ref="assignRef" class="relative">
+        <button
+          class="text-xs px-2.5 py-1.5 rounded-lg border border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-700 flex items-center gap-1.5"
+          @click="assignOpen = !assignOpen"
+        >
+          <UserIcon class="w-3.5 h-3.5" />
+          Assign
+        </button>
+        <div
+          v-if="assignOpen"
+          class="absolute right-0 top-full mt-1 w-52 bg-white border border-gray-200 rounded-xl shadow-lg z-20 overflow-hidden"
+        >
+          <div v-if="agentsLoading" class="px-3 py-2 text-xs text-gray-400">Loading…</div>
+          <template v-else>
+            <button
+              class="w-full text-left px-3 py-2 text-xs text-gray-500 hover:bg-gray-50"
+              @click="assign(null)"
+            >
+              Unassign
+            </button>
+            <button
+              v-for="agent in agents"
+              :key="agent.id"
+              class="w-full text-left px-3 py-2 text-xs hover:bg-blue-50 hover:text-blue-700 flex items-center gap-2"
+              :class="
+                conversation.assignedAgentId === agent.id
+                  ? 'bg-blue-50 text-blue-700 font-medium'
+                  : 'text-gray-700'
+              "
+              @click="assign(agent.id)"
+            >
+              <span
+                class="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-700 flex-shrink-0"
+              >
+                {{ initials(`${agent.firstName} ${agent.lastName}`) }}
+              </span>
+              {{ agent.firstName }} {{ agent.lastName }}
+            </button>
+          </template>
+        </div>
+      </div>
+
+      <!-- Status actions -->
+      <div class="flex gap-1.5">
+        <button
+          v-for="s in statuses"
+          :key="s.value"
+          class="text-xs px-3 py-1 rounded-full border font-medium transition-all"
+          :class="
+            conversation.status === s.value
+              ? 'bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-200'
+              : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300 hover:text-gray-700'
+          "
+          @click="emit('updateStatus', s.value)"
+        >
+          {{ s.label }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div ref="scrollEl" class="flex-1 overflow-y-auto px-5 py-4 space-y-4 bg-gray-50/70">
+      <div
+        v-for="msg in messages"
+        :key="msg.id"
+        class="flex items-end gap-2"
+        :class="msg.isFromContact ? 'justify-start' : 'justify-end'"
+      >
+        <div
+          v-if="msg.isFromContact"
+          class="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-white text-[10px] font-bold mb-0.5"
+          :class="platformColor(conversation.platform)"
+        >
+          {{ (conversation.contactName || '?').charAt(0).toUpperCase() }}
+        </div>
+
+        <div
+          class="max-w-[68%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed shadow-sm"
+          :class="
+            msg.isFromContact
+              ? 'bg-white border border-gray-200 text-gray-800 rounded-bl-md'
+              : 'bg-blue-600 text-white rounded-br-md'
+          "
+        >
+          <template v-if="msg.type === 'image' && msg.mediaUrl">
+            <img :src="mediaBase + msg.mediaUrl" class="max-w-full rounded-lg mb-1" />
+          </template>
+          <template v-else-if="msg.type === 'file' && msg.mediaUrl">
+            <a
+              :href="mediaBase + msg.mediaUrl"
+              target="_blank"
+              class="flex items-center gap-1.5 underline opacity-90"
+            >
+              <PaperClipIcon class="w-3.5 h-3.5 flex-shrink-0" />
+              {{ msg.content || 'Download file' }}
+            </a>
+          </template>
+          <template v-else>{{ msg.content }}</template>
+          <p class="text-[10px] mt-1.5 opacity-50 text-right">{{ formatDate(msg.createdAt) }}</p>
+        </div>
+      </div>
+
+      <!-- Typing indicator -->
+      <div v-if="typingUsers?.length" class="flex items-end gap-2 justify-start">
+        <div
+          class="bg-white border border-gray-200 px-4 py-2.5 rounded-2xl rounded-bl-md shadow-sm flex items-center gap-1.5"
+        >
+          <span
+            class="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce"
+            style="animation-delay: 0ms"
+          />
+          <span
+            class="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce"
+            style="animation-delay: 150ms"
+          />
+          <span
+            class="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce"
+            style="animation-delay: 300ms"
+          />
+          <span class="text-xs text-gray-400 ml-1">{{ typingLabel }}</span>
+        </div>
+      </div>
+
+      <div v-if="loading" class="flex justify-center py-2">
+        <svg class="w-5 h-5 animate-spin text-blue-400" fill="none" viewBox="0 0 24 24">
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          />
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Canned responses picker -->
+    <div
+      v-if="cannedOpen && activePrompts.length"
+      class="border-t border-gray-100 bg-white max-h-40 overflow-y-auto"
+    >
+      <p class="px-4 pt-2 pb-1 text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+        Quick replies
+      </p>
+      <button
+        v-for="prompt in activePrompts"
+        :key="prompt.id"
+        class="w-full text-left px-4 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 text-gray-700"
+        @click="insertCanned(prompt.content)"
+      >
+        <span class="font-medium">{{ prompt.name }}</span>
+        <span class="text-gray-400 ml-2 text-xs">{{ truncate(prompt.content, 50) }}</span>
+      </button>
+    </div>
+
+    <!-- Input -->
+    <div class="flex items-end gap-2 px-4 py-3 border-t border-gray-200 bg-white flex-shrink-0">
+      <input ref="fileInput" type="file" class="hidden" @change="onFileChange" />
+      <button
+        class="flex-shrink-0 p-2 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+        title="Attach file"
+        @click="fileInput?.click()"
+      >
+        <PaperClipIcon class="w-4 h-4" />
+      </button>
+      <button
+        class="flex-shrink-0 p-2 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+        :class="cannedOpen ? 'text-blue-600 bg-blue-50' : ''"
+        title="Quick replies"
+        @click="toggleCanned"
+      >
+        <BoltIcon class="w-4 h-4" />
+      </button>
+      <textarea
+        v-model="draft"
+        rows="1"
+        placeholder="Type a message… (Enter to send)"
+        class="flex-1 input resize-none max-h-28 overflow-y-auto text-sm"
+        style="field-sizing: content"
+        @keydown.enter.exact.prevent="send"
+        @input="onInput"
+        @blur="onBlur"
+      />
+      <button
+        class="btn-primary py-2.5 px-3 flex-shrink-0 shadow-sm shadow-blue-200"
+        :disabled="!draft.trim()"
+        @click="send"
+      >
+        <PaperAirplaneIcon class="w-4 h-4" />
+      </button>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { PaperAirplaneIcon } from '@heroicons/vue/24/solid'
+import { UserIcon, BoltIcon, PaperClipIcon } from '@heroicons/vue/24/outline'
+import type { Conversation, Message, User, Prompt } from '~/types'
+import { platformColor, formatDate, truncate, initials } from '~/utils'
+
+const props = defineProps<{
+  conversation: Conversation
+  messages: Message[]
+  loading?: boolean
+  typingUsers?: { userId?: string; userName?: string }[]
+}>()
+const emit = defineEmits<{
+  send: [content: string]
+  updateStatus: [status: string]
+  assign: [agentId: string | null]
+  typing: []
+  stopTyping: []
+}>()
+
+const config = useRuntimeConfig()
+const mediaBase = config.public.baseUrl as string
+
+const draft = ref('')
+const scrollEl = ref<HTMLElement>()
+const fileInput = ref<HTMLInputElement>()
+const assignRef = ref<HTMLElement>()
+const assignOpen = ref(false)
+const cannedOpen = ref(false)
+const agents = ref<User[]>([])
+const agentsLoading = ref(false)
+const activePrompts = ref<Prompt[]>([])
+
+const statuses = [
+  { label: 'Open', value: 'open' },
+  { label: 'Pending', value: 'pending' },
+  { label: 'Resolved', value: 'resolved' },
+]
+
+const typingLabel = computed(() => {
+  const users = props.typingUsers ?? []
+  if (!users.length) return ''
+  const names = users.map((u) => u.userName ?? 'Someone')
+  return `${names.join(', ')} ${users.length === 1 ? 'is' : 'are'} typing…`
+})
+
+async function loadAgents() {
+  if (agents.value.length) return
+  agentsLoading.value = true
+  try {
+    const { $api } = useNuxtApp()
+    const { data } = await $api.get('/users', { params: { limit: 100 } })
+    agents.value = (data.data?.data ?? []) as User[]
+  } finally {
+    agentsLoading.value = false
+  }
+}
+
+async function loadPrompts() {
+  if (activePrompts.value.length) return
+  const { $api } = useNuxtApp()
+  const { data } = await $api.get('/prompts')
+  activePrompts.value = ((data.data ?? []) as Prompt[]).filter((p) => p.isActive)
+}
+
+function assign(agentId: string | null) {
+  emit('assign', agentId)
+  assignOpen.value = false
+}
+
+function toggleCanned() {
+  cannedOpen.value = !cannedOpen.value
+  if (cannedOpen.value) loadPrompts()
+}
+
+function insertCanned(content: string) {
+  draft.value = content
+  cannedOpen.value = false
+}
+
+function send() {
+  if (!draft.value.trim()) return
+  emit('send', draft.value)
+  draft.value = ''
+  emit('stopTyping')
+}
+
+let typingTimer: ReturnType<typeof setTimeout> | null = null
+let isTyping = false
+
+function onInput() {
+  if (!isTyping) {
+    isTyping = true
+    emit('typing')
+  }
+  if (typingTimer) clearTimeout(typingTimer)
+  typingTimer = setTimeout(() => {
+    isTyping = false
+    emit('stopTyping')
+  }, 2000)
+}
+
+async function onFileChange(e: Event) {
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+  const formData = new FormData()
+  formData.append('file', file)
+  const { $api } = useNuxtApp()
+  await $api.post(`/conversations/${props.conversation.id}/upload`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+  input.value = ''
+}
+
+function onBlur() {
+  if (isTyping) {
+    isTyping = false
+    emit('stopTyping')
+    if (typingTimer) clearTimeout(typingTimer)
+  }
+}
+
+// Close assign dropdown on outside click
+onMounted(() => {
+  document.addEventListener('click', (e) => {
+    if (assignRef.value && !assignRef.value.contains(e.target as Node)) {
+      assignOpen.value = false
+    }
+  })
+})
+
+watch(assignOpen, (open) => {
+  if (open) loadAgents()
+})
+
+watch(
+  () => props.messages.length,
+  async () => {
+    await nextTick()
+    if (scrollEl.value) scrollEl.value.scrollTop = scrollEl.value.scrollHeight
+  }
+)
+</script>
