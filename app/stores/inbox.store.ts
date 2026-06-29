@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
 import type { Conversation, Message, PaginatedResult } from '~/types'
-import { conversationService } from '~/services/conversation.service'
+import { useConversationService } from '~/services/conversation.service'
 
 export const useInboxStore = defineStore('inbox', () => {
+  const conversationService = useConversationService()
+
   const conversations = ref<Conversation[]>([])
   const activeConversation = ref<Conversation | null>(null)
   const messages = ref<Message[]>([])
@@ -46,10 +48,8 @@ export const useInboxStore = defineStore('inbox', () => {
 
   async function sendMessage(content: string) {
     if (!activeConversation.value) return
-    const msg = await conversationService.sendMessage({
-      conversationId: activeConversation.value.id,
-      content,
-    })
+    const conv = activeConversation.value
+    const msg = await conversationService.sendReply(conv.id, content, conv.platform)
     messages.value.push(msg)
   }
 

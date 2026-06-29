@@ -1,6 +1,19 @@
 import type { Inbox } from '~/types'
 import { useHttp } from '~/composables/useHttp'
 
+export interface FacebookPage {
+  id: string
+  name: string
+  access_token: string
+}
+
+export interface FacebookWebhookInfo {
+  callbackUrl: string
+  verifyToken: string
+  subscribeFields: string[]
+  setupSteps: string[]
+}
+
 export const useFacebookService = () => {
   const http = useHttp()
 
@@ -13,5 +26,9 @@ export const useFacebookService = () => {
     deleteInbox: (id: string) => http.delete(`/inbox/${id}`),
     getStatus: () =>
       http.get<{ integration: string; status: string }>('/integrations/facebook/status'),
+    syncPages: (userAccessToken: string) =>
+      http.post<FacebookPage[]>('/integrations/facebook/sync-pages', { userAccessToken }),
+    getWebhookInfo: () =>
+      http.get<FacebookWebhookInfo>('/integrations/facebook/webhook/info'),
   }
 }

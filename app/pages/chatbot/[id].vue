@@ -102,7 +102,7 @@
 <script setup lang="ts">
 import { ChevronLeftIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import type { Chatbot } from '~/types'
-import { chatbotService } from '~/services/chatbot.service'
+import { useChatbotService } from '~/services/chatbot.service'
 
 interface FlowStep {
   trigger: 'keyword' | 'greeting' | 'fallback'
@@ -114,6 +114,7 @@ interface FlowStep {
 definePageMeta({ middleware: 'auth' })
 
 const route = useRoute()
+const chatbotService = useChatbotService()
 
 const bot = ref<Chatbot | null>(null)
 const steps = ref<FlowStep[]>([])
@@ -124,7 +125,7 @@ const saved = ref(false)
 onMounted(async () => {
   const data = await chatbotService.findOne(route.params.id as string)
   bot.value = data
-  steps.value = (data.flows ?? []).map((s) => ({ ...s })) as FlowStep[]
+  steps.value = (data.flows ?? []).map((s) => ({ ...(s as unknown as FlowStep) }))
   loading.value = false
 })
 

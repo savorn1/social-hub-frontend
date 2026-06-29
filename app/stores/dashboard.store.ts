@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
 import type { DashboardStats, PlatformCount, Conversation } from '~/types'
-import { dashboardService } from '~/services/dashboard.service'
+import { useDashboardService } from '~/services/dashboard.service'
 
 export const useDashboardStore = defineStore('dashboard', () => {
+  const dashboardService = useDashboardService()
+
   const stats = ref<DashboardStats | null>(null)
   const byPlatform = ref<PlatformCount[]>([])
   const recentActivity = ref<Conversation[]>([])

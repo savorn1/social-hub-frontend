@@ -121,11 +121,12 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionRoot } from '@headlessui/vue'
 import { PlusIcon, MagnifyingGlassIcon, BookOpenIcon } from '@heroicons/vue/24/outline'
 import type { KnowledgeBase, KnowledgeItem } from '~/types'
-import { knowledgeService } from '~/services/knowledge.service'
+import { useKnowledgeService } from '~/services/knowledge.service'
 import { useApi } from '~/composables/useApi'
 
 definePageMeta({ middleware: 'auth' })
 
+const knowledgeService = useKnowledgeService()
 const { loading, request } = useApi()
 const bases = ref<KnowledgeBase[]>([])
 const searchQuery = ref('')

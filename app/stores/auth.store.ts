@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
 import type { User, LoginPayload, RegisterPayload } from '~/types'
-import { authService } from '~/services/auth.service'
+import { useAuthService } from '~/services/auth.service'
 
 export const useAuthStore = defineStore('auth', () => {
+  const authService = useAuthService()
+
   const user = ref<User | null>(null)
   const accessToken = ref<string | null>(null)
   const refreshToken = ref<string | null>(null)

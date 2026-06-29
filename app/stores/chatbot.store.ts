@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
 import type { Chatbot } from '~/types'
-import { chatbotService } from '~/services/chatbot.service'
+import { useChatbotService } from '~/services/chatbot.service'
 
 export const useChatbotStore = defineStore('chatbot', () => {
+  const chatbotService = useChatbotService()
+
   const chatbots = ref<Chatbot[]>([])
   const loading = ref(false)
 

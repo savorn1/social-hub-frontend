@@ -1,10 +1,15 @@
 import { defineStore } from 'pinia'
 import type { Inbox } from '~/types'
-import { facebookService } from '~/services/facebook.service'
+import { useFacebookService, type FacebookPage, type FacebookWebhookInfo } from '~/services/facebook.service'
 
 export const useFacebookStore = defineStore('facebook', () => {
+  const facebookService = useFacebookService()
+
   const inboxes = ref<Inbox[]>([])
   const loading = ref(false)
+  const pages = ref<FacebookPage[]>([])
+  const pagesLoading = ref(false)
+  const webhookInfo = ref<FacebookWebhookInfo | null>(null)
 
   async function fetchInboxes() {
     loading.value = true
@@ -32,5 +37,34 @@ export const useFacebookStore = defineStore('facebook', () => {
     inboxes.value = inboxes.value.filter((i) => i.id !== id)
   }
 
-  return { inboxes, loading, fetchInboxes, createInbox, toggleInbox, removeInbox }
+  async function syncPages(userAccessToken: string) {
+    pagesLoading.value = true
+    try {
+      pages.value = await facebookService.syncPages(userAccessToken)
+    } finally {
+      pagesLoading.value = false
+    }
+  }
+
+  async function fetchWebhookInfo() {
+    try {
+      webhookInfo.value = await facebookService.getWebhookInfo()
+    } catch {
+      // silently skip if API unreachable
+    }
+  }
+
+  return {
+    inboxes,
+    loading,
+    pages,
+    pagesLoading,
+    webhookInfo,
+    fetchInboxes,
+    createInbox,
+    toggleInbox,
+    removeInbox,
+    syncPages,
+    fetchWebhookInfo,
+  }
 })
