@@ -50,13 +50,6 @@
               </p>
               <p class="text-[11px] text-gray-500 dark:text-slate-400 truncate">{{ user?.email }}</p>
             </div>
-            <button
-              class="p-1 rounded-lg text-gray-400 dark:text-slate-500 hover:bg-gray-200 dark:hover:bg-slate-700 hover:text-gray-600 dark:hover:text-slate-300 transition-colors flex-shrink-0"
-              title="Logout"
-              @click="logout"
-            >
-              <ArrowRightEndOnRectangleIcon class="w-4 h-4" />
-            </button>
           </div>
         </template>
         <template v-else>
@@ -119,19 +112,6 @@
         </div>
       </nav>
 
-      <!-- Settings link at bottom -->
-      <div class="border-t border-gray-100 dark:border-slate-700 p-3 flex-shrink-0">
-        <NuxtLink
-          to="/settings"
-          :title="collapsed ? 'Settings' : undefined"
-          class="flex items-center gap-3 px-2.5 py-2 rounded-xl text-sm font-medium text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-gray-800 dark:hover:text-slate-200 transition-colors"
-          :class="collapsed ? 'justify-center' : ''"
-          active-class="!bg-blue-600 !text-white hover:!bg-blue-700 shadow-nav-active"
-        >
-          <Cog6ToothIcon class="w-5 h-5 flex-shrink-0" />
-          <span v-if="!collapsed">Settings</span>
-        </NuxtLink>
-      </div>
     </aside>
 
     <!-- Main -->
@@ -153,6 +133,55 @@
           <MoonIcon v-else class="w-5 h-5" />
         </button>
         <CommonNotificationBell />
+
+        <!-- User dropdown -->
+        <div ref="userMenuRef" class="relative">
+          <button
+            class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-sm select-none hover:ring-2 hover:ring-blue-400 transition-all"
+            :title="`${user?.firstName} ${user?.lastName}`"
+            @click="userMenuOpen = !userMenuOpen"
+          >
+            <span class="text-xs font-bold text-white">{{
+              initials((user?.firstName ?? '') + ' ' + (user?.lastName ?? ''))
+            }}</span>
+          </button>
+
+          <Transition
+            enter-active-class="transition duration-100 ease-out"
+            enter-from-class="opacity-0 scale-95"
+            enter-to-class="opacity-100 scale-100"
+            leave-active-class="transition duration-75 ease-in"
+            leave-from-class="opacity-100 scale-100"
+            leave-to-class="opacity-0 scale-95"
+          >
+            <div
+              v-if="userMenuOpen"
+              class="absolute right-0 top-full mt-2 w-52 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-700 rounded-xl shadow-lg py-1 z-50 origin-top-right"
+            >
+              <div class="px-3 py-2.5 border-b border-gray-100 dark:border-slate-700">
+                <p class="text-sm font-semibold text-gray-900 dark:text-slate-100 truncate">
+                  {{ user?.firstName }} {{ user?.lastName }}
+                </p>
+                <p class="text-[11px] text-gray-500 dark:text-slate-400 truncate">{{ user?.email }}</p>
+              </div>
+              <NuxtLink
+                to="/settings"
+                class="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
+                @click="userMenuOpen = false"
+              >
+                <Cog6ToothIcon class="w-4 h-4 text-gray-400 dark:text-slate-500" />
+                Settings
+              </NuxtLink>
+              <button
+                class="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                @click="logout"
+              >
+                <ArrowRightEndOnRectangleIcon class="w-4 h-4" />
+                Logout
+              </button>
+            </div>
+          </Transition>
+        </div>
       </header>
 
       <!-- Page content -->
@@ -200,10 +229,20 @@ interface NavGroup {
 }
 
 const collapsed = ref(false)
+const userMenuOpen = ref(false)
+const userMenuRef = ref<HTMLElement | null>(null)
 const route = useRoute()
 const { user, logout } = useAuth()
 const { isDark, toggle, init } = useDarkMode()
-onMounted(init)
+
+onMounted(() => {
+  init()
+  document.addEventListener('click', (e) => {
+    if (userMenuRef.value && !userMenuRef.value.contains(e.target as Node)) {
+      userMenuOpen.value = false
+    }
+  })
+})
 
 const navGroups: NavGroup[] = [
   {
