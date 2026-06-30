@@ -12,11 +12,11 @@ import { platformLabel } from '~/utils'
 defineProps<{ platform: Platform }>()
 
 const styles: Record<string, string> = {
-  facebook: 'bg-blue-50 text-blue-700',
-  telegram: 'bg-sky-50 text-sky-700',
-  instagram: 'bg-pink-50 text-pink-700',
-  whatsapp: 'bg-green-50 text-green-700',
-  web: 'bg-slate-50 text-slate-600',
+  facebook: 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400',
+  telegram: 'bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-400',
+  instagram: 'bg-pink-50 dark:bg-pink-900/30 text-pink-700 dark:text-pink-400',
+  whatsapp: 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400',
+  web: 'bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-300',
 }
 
 const dots: Record<string, string> = {

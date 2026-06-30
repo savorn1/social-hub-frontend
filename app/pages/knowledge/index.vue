@@ -2,8 +2,8 @@
   <div class="p-6">
     <div class="flex items-center justify-between mb-6">
       <div>
-        <h1 class="text-xl font-bold text-gray-900">Knowledge Base</h1>
-        <p class="text-sm text-gray-500 mt-0.5">
+        <h1 class="text-xl font-bold text-gray-900 dark:text-slate-100">Knowledge Base</h1>
+        <p class="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
           Train your chatbots with Q&amp;A pairs and documents
         </p>
       </div>
@@ -32,7 +32,7 @@
       </div>
       <button
         v-if="searchResults.length || searchQuery"
-        class="text-xs text-gray-400 hover:text-gray-600"
+        class="text-xs text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300"
         @click="clearSearch"
       >
         Clear
@@ -40,8 +40,8 @@
     </div>
 
     <!-- Search results -->
-    <div v-if="searchResults.length" class="card divide-y divide-gray-100 mb-6">
-      <p class="px-4 pt-3 pb-2 text-xs font-semibold text-gray-400 uppercase tracking-wide">
+    <div v-if="searchResults.length" class="card divide-y divide-gray-100 dark:divide-slate-700 mb-6">
+      <p class="px-4 pt-3 pb-2 text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide">
         {{ searchResults.length }} result{{ searchResults.length !== 1 ? 's' : '' }}
       </p>
       <div v-for="item in searchResults" :key="item.id" class="px-4 py-3">
@@ -55,8 +55,8 @@
             {{ item.source }}
           </span>
         </div>
-        <p class="text-sm font-medium text-gray-900">{{ item.question }}</p>
-        <p class="text-sm text-gray-500 mt-0.5 line-clamp-2">{{ item.answer }}</p>
+        <p class="text-sm font-medium text-gray-900 dark:text-slate-100">{{ item.question }}</p>
+        <p class="text-sm text-gray-500 dark:text-slate-400 mt-0.5 line-clamp-2">{{ item.answer }}</p>
       </div>
     </div>
 
@@ -66,8 +66,8 @@
         <!-- Base header -->
         <div class="flex items-start justify-between">
           <div>
-            <p class="font-semibold text-gray-900">{{ kb.name }}</p>
-            <p class="text-xs text-gray-400 mt-0.5">{{ kb.description || 'No description' }}</p>
+            <p class="font-semibold text-gray-900 dark:text-slate-100">{{ kb.name }}</p>
+            <p class="text-xs text-gray-400 dark:text-slate-500 mt-0.5">{{ kb.description || 'No description' }}</p>
           </div>
           <div class="flex gap-2">
             <label
@@ -119,7 +119,7 @@
           <div
             v-for="item in kb.items.slice(0, 3)"
             :key="item.id"
-            class="flex items-start justify-between gap-2 p-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 group"
+            class="flex items-start justify-between gap-2 p-2.5 rounded-lg bg-gray-50 dark:bg-slate-700/30 hover:bg-gray-100 dark:hover:bg-slate-700/60 group"
           >
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-1.5 mb-0.5">
@@ -132,8 +132,8 @@
                   {{ item.sourceType?.toUpperCase() }}
                 </span>
               </div>
-              <p class="text-xs font-medium text-gray-700 truncate">{{ item.question }}</p>
-              <p class="text-xs text-gray-400 truncate">{{ item.answer }}</p>
+              <p class="text-xs font-medium text-gray-700 dark:text-slate-300 truncate">{{ item.question }}</p>
+              <p class="text-xs text-gray-400 dark:text-slate-500 truncate">{{ item.answer }}</p>
             </div>
             <div
               class="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
@@ -157,7 +157,7 @@
             View all {{ kb.items.length }} items →
           </button>
         </div>
-        <p v-else class="text-xs text-gray-400 italic">
+        <p v-else class="text-xs text-gray-400 dark:text-slate-500 italic">
           No items yet — add Q&amp;A or upload a document.
         </p>
       </div>
@@ -180,8 +180,8 @@
       <Dialog class="relative z-50" @close="createBaseDialog = false">
         <div class="dialog-overlay" />
         <div class="fixed inset-0 flex items-center justify-center p-4">
-          <DialogPanel class="card p-6 w-full max-w-md shadow-xl">
-            <DialogTitle class="text-base font-semibold text-gray-900 mb-4"
+          <DialogPanel class="card p-6 w-full max-w-md shadow-dialog">
+            <DialogTitle class="text-base font-semibold text-gray-900 dark:text-slate-100 mb-4"
               >New Knowledge Base</DialogTitle
             >
             <div class="space-y-3">
@@ -210,8 +210,8 @@
       <Dialog class="relative z-50" @close="itemDialog = false">
         <div class="dialog-overlay" />
         <div class="fixed inset-0 flex items-center justify-center p-4">
-          <DialogPanel class="card p-6 w-full max-w-lg shadow-xl">
-            <DialogTitle class="text-base font-semibold text-gray-900 mb-4">
+          <DialogPanel class="card p-6 w-full max-w-lg shadow-dialog">
+            <DialogTitle class="text-base font-semibold text-gray-900 dark:text-slate-100 mb-4">
               {{ editingItemId ? 'Edit Item' : 'Add Q&A Item' }}
             </DialogTitle>
             <div class="space-y-3">
@@ -234,7 +234,7 @@
               </div>
               <div>
                 <label class="label"
-                  >Tags <span class="text-gray-400 font-normal">(comma-separated)</span></label
+                  >Tags <span class="text-gray-400 dark:text-slate-500 font-normal">(comma-separated)</span></label
                 >
                 <input
                   v-model="itemTagsRaw"
@@ -274,16 +274,16 @@
       <Dialog class="relative z-50" @close="viewAllDialog = false">
         <div class="dialog-overlay" />
         <div class="fixed inset-0 flex items-center justify-center p-4">
-          <DialogPanel class="card p-6 w-full max-w-2xl shadow-xl max-h-[80vh] flex flex-col">
-            <DialogTitle class="text-base font-semibold text-gray-900 mb-1">{{
+          <DialogPanel class="card p-6 w-full max-w-2xl shadow-dialog max-h-[80vh] flex flex-col">
+            <DialogTitle class="text-base font-semibold text-gray-900 dark:text-slate-100 mb-1">{{
               viewAllBase?.name
             }}</DialogTitle>
-            <p class="text-xs text-gray-400 mb-4">{{ viewAllBase?.items?.length }} items</p>
+            <p class="text-xs text-gray-400 dark:text-slate-500 mb-4">{{ viewAllBase?.items?.length }} items</p>
             <div class="flex-1 overflow-y-auto space-y-2 pr-1">
               <div
                 v-for="item in viewAllBase?.items"
                 :key="item.id"
-                class="flex items-start justify-between gap-3 p-3 rounded-lg border border-gray-100 hover:border-gray-200 group"
+                class="flex items-start justify-between gap-3 p-3 rounded-lg border border-gray-100 dark:border-slate-700 hover:border-gray-200 dark:hover:border-slate-600 group"
               >
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center gap-1.5 mb-1">
@@ -296,8 +296,8 @@
                       {{ item.source }}
                     </span>
                   </div>
-                  <p class="text-xs font-medium text-gray-800">{{ item.question }}</p>
-                  <p class="text-xs text-gray-500 mt-0.5 line-clamp-2">{{ item.answer }}</p>
+                  <p class="text-xs font-medium text-gray-800 dark:text-slate-100">{{ item.question }}</p>
+                  <p class="text-xs text-gray-500 dark:text-slate-400 mt-0.5 line-clamp-2">{{ item.answer }}</p>
                 </div>
                 <div
                   class="flex gap-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -341,6 +341,7 @@ import { useKnowledgeService } from '~/services/knowledge.service'
 definePageMeta({ middleware: 'auth' })
 
 const knowledgeService = useKnowledgeService()
+const toast = useToast()
 const bases = ref<KnowledgeBase[]>([])
 const loading = ref(false)
 
@@ -409,10 +410,15 @@ function clearSearch() {
 }
 
 async function createBase() {
-  await knowledgeService.createBase(baseForm)
-  createBaseDialog.value = false
-  Object.assign(baseForm, { name: '', description: '' })
-  await load()
+  try {
+    await knowledgeService.createBase(baseForm)
+    createBaseDialog.value = false
+    Object.assign(baseForm, { name: '', description: '' })
+    await load()
+    toast.success('Knowledge base created')
+  } catch {
+    toast.error('Failed to create knowledge base')
+  }
 }
 
 async function onFileUpload(e: Event, baseId: string) {
@@ -428,9 +434,12 @@ async function onFileUpload(e: Event, baseId: string) {
     uploadResult.value = result
     uploadResultBase.value = baseId
     await load()
+    toast.success(`Inserted ${result.inserted} chunks from document`)
     setTimeout(() => {
       uploadResultBase.value = null
     }, 4000)
+  } catch {
+    toast.error('Failed to upload document')
   } finally {
     uploadingBase.value = null
   }
@@ -462,22 +471,31 @@ async function saveItem() {
       .filter(Boolean)
     if (editingItemId.value) {
       await knowledgeService.updateItem(editingItemId.value, { ...itemForm, tags })
+      toast.success('Item updated')
     } else {
       await knowledgeService.addItem(activeBaseId.value!, { ...itemForm, tags })
+      toast.success('Item added')
     }
     itemDialog.value = false
     await load()
+  } catch {
+    toast.error('Failed to save item')
   } finally {
     savingItem.value = false
   }
 }
 
 async function deleteItem(id: string, baseId: string) {
-  await knowledgeService.removeItem(id)
-  const base = bases.value.find((b) => b.id === baseId)
-  if (base?.items) base.items = base.items.filter((i) => i.id !== id)
-  if (viewAllBase.value?.id === baseId && viewAllBase.value.items) {
-    viewAllBase.value.items = viewAllBase.value.items.filter((i) => i.id !== id)
+  try {
+    await knowledgeService.removeItem(id)
+    const base = bases.value.find((b) => b.id === baseId)
+    if (base?.items) base.items = base.items.filter((i) => i.id !== id)
+    if (viewAllBase.value?.id === baseId && viewAllBase.value.items) {
+      viewAllBase.value.items = viewAllBase.value.items.filter((i) => i.id !== id)
+    }
+    toast.success('Item deleted')
+  } catch {
+    toast.error('Failed to delete item')
   }
 }
 

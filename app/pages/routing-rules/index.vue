@@ -1,13 +1,13 @@
 <template>
   <div class="p-6 max-w-4xl">
     <div class="flex items-center justify-between mb-6">
-      <h1 class="text-xl font-bold text-gray-900">Routing Rules</h1>
+      <h1 class="text-xl font-bold text-gray-900 dark:text-slate-100">Routing Rules</h1>
       <button class="btn-primary" @click="openCreate">+ New Rule</button>
     </div>
 
-    <div v-if="loading" class="text-sm text-gray-400">Loading…</div>
+    <div v-if="loading" class="text-sm text-gray-400 dark:text-slate-500">Loading…</div>
 
-    <div v-else-if="rules.length === 0" class="card p-10 text-center text-gray-400 text-sm">
+    <div v-else-if="rules.length === 0" class="card p-10 text-center text-gray-400 dark:text-slate-500 text-sm">
       No routing rules yet. Create one to auto-assign conversations.
     </div>
 
@@ -15,25 +15,25 @@
       <div v-for="rule in rules" :key="rule.id" class="card p-4 flex items-start gap-4">
         <div class="flex-1">
           <div class="flex items-center gap-2 mb-1">
-            <span class="font-medium text-gray-900">{{ rule.name }}</span>
+            <span class="font-medium text-gray-900 dark:text-slate-100">{{ rule.name }}</span>
             <span
               class="text-xs px-1.5 py-0.5 rounded"
-              :class="rule.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'"
+              :class="rule.isActive ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400'"
             >
               {{ rule.isActive ? 'Active' : 'Inactive' }}
             </span>
-            <span class="text-xs text-gray-400">Priority: {{ rule.priority }}</span>
+            <span class="text-xs text-gray-400 dark:text-slate-500">Priority: {{ rule.priority }}</span>
           </div>
           <div class="flex flex-wrap gap-1">
             <span
               v-for="(cond, i) in rule.conditions"
               :key="i"
-              class="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full"
+              class="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 px-2 py-0.5 rounded-full"
             >
               {{ cond.field }} {{ cond.operator }} "{{ cond.value }}"
             </span>
           </div>
-          <div class="text-xs text-gray-500 mt-1">
+          <div class="text-xs text-gray-500 dark:text-slate-400 mt-1">
             Action: assign to agent {{ rule.assignedAgentId ?? '—' }}
           </div>
         </div>
@@ -49,8 +49,8 @@
     <!-- Create / Edit Modal -->
     <div v-if="modalOpen" class="fixed inset-0 flex items-center justify-center z-50">
       <div class="dialog-overlay absolute inset-0" @click="modalOpen = false" />
-      <div class="relative bg-white rounded-xl shadow-xl w-full max-w-lg p-6 z-10">
-        <h2 class="text-lg font-semibold mb-4">{{ editing ? 'Edit Rule' : 'New Rule' }}</h2>
+      <div class="relative bg-white dark:bg-slate-800 rounded-xl shadow-dialog w-full max-w-lg p-6 z-10">
+        <h2 class="text-lg font-semibold dark:text-slate-100 mb-4">{{ editing ? 'Edit Rule' : 'New Rule' }}</h2>
 
         <div class="space-y-4">
           <div>
@@ -69,7 +69,7 @@
             <div class="flex items-end pb-1">
               <label class="flex items-center gap-2 cursor-pointer">
                 <input v-model="form.isActive" type="checkbox" class="w-4 h-4 accent-indigo-600" />
-                <span class="text-sm text-gray-700">Active</span>
+                <span class="text-sm text-gray-700 dark:text-slate-300">Active</span>
               </label>
             </div>
           </div>
@@ -92,7 +92,7 @@
                 <option value="contains">contains</option>
               </select>
               <input v-model="cond.value" class="input flex-1" placeholder="value" />
-              <button class="text-gray-400 hover:text-red-500" @click="removeCondition(i)">
+              <button class="text-gray-400 dark:text-slate-500 hover:text-red-500" @click="removeCondition(i)">
                 ✕
               </button>
             </div>
@@ -107,7 +107,7 @@
 
         <div class="flex justify-end gap-3 mt-6">
           <button class="btn-secondary" @click="modalOpen = false">Cancel</button>
-          <button class="btn-primary" :disabled="saving" @click="save">
+          <button class="btn-primary" :disabled="saving || !form.name.trim()" @click="save">
             {{ saving ? 'Saving…' : 'Save' }}
           </button>
         </div>
@@ -122,6 +122,7 @@ import type { RoutingRule, RuleCondition } from '~/types'
 definePageMeta({ middleware: 'auth' })
 
 const { $api } = useNuxtApp()
+const toast = useToast()
 
 const rules = ref<RoutingRule[]>([])
 const loading = ref(true)
@@ -182,19 +183,32 @@ async function save() {
     action: 'assign_agent' as const,
     assignedAgentId: form.assignedAgentId || undefined,
   }
-  if (editing.value) {
-    await $api.patch(`/routing-rules/${editing.value}`, dto)
-  } else {
-    await $api.post('/routing-rules', dto)
+  try {
+    if (editing.value) {
+      await $api.patch(`/routing-rules/${editing.value}`, dto)
+      toast.success('Rule updated')
+    } else {
+      await $api.post('/routing-rules', dto)
+      toast.success('Rule created')
+    }
+    modalOpen.value = false
+    await loadRules()
+  } catch (e: unknown) {
+    const msg = (e as { response?: { data?: { message?: string } } })?.response?.data?.message
+    toast.error(msg ?? 'Failed to save rule')
+  } finally {
+    saving.value = false
   }
-  modalOpen.value = false
-  saving.value = false
-  await loadRules()
 }
 
 async function deleteRule(id: string) {
   if (!confirm('Delete this rule?')) return
-  await $api.delete(`/routing-rules/${id}`)
-  await loadRules()
+  try {
+    await $api.delete(`/routing-rules/${id}`)
+    await loadRules()
+    toast.success('Rule deleted')
+  } catch {
+    toast.error('Failed to delete rule')
+  }
 }
 </script>

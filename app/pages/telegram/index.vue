@@ -3,8 +3,8 @@
     <!-- Header -->
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-xl font-bold text-gray-900">Telegram Integration</h1>
-        <p class="text-sm text-gray-500 mt-0.5">Manage your Telegram Bot connections</p>
+        <h1 class="text-xl font-bold text-gray-900 dark:text-slate-100">Telegram Integration</h1>
+        <p class="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Manage your Telegram Bot connections</p>
       </div>
       <button class="btn-primary" @click="connectDialog = true">
         <PlusIcon class="w-4 h-4" /> Add Bot
@@ -23,17 +23,17 @@
               <PaperAirplaneIcon class="w-5 h-5 text-white" />
             </div>
             <div>
-              <p class="font-semibold text-gray-900 text-sm">{{ inbox.name }}</p>
+              <p class="font-semibold text-gray-900 dark:text-slate-100 text-sm">{{ inbox.name }}</p>
               <p v-if="botInfos[inbox.id]" class="text-xs text-sky-600 font-mono">
                 @{{ botInfos[inbox.id].username }}
               </p>
-              <p v-else class="text-xs text-gray-400">Telegram Bot</p>
+              <p v-else class="text-xs text-gray-400 dark:text-slate-500">Telegram Bot</p>
             </div>
           </div>
           <!-- Active toggle -->
           <button
             class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none"
-            :class="inbox.isActive ? 'bg-sky-500' : 'bg-gray-200'"
+            :class="inbox.isActive ? 'bg-sky-500' : 'bg-gray-200 dark:bg-slate-600'"
             :title="inbox.isActive ? 'Deactivate' : 'Activate'"
             @click="toggleInbox(inbox.id, !inbox.isActive)"
           >
@@ -49,8 +49,8 @@
           class="rounded-lg border p-3 space-y-2"
           :class="
             webhookInfos[inbox.id]?.isRegistered
-              ? 'border-green-200 bg-green-50'
-              : 'border-amber-200 bg-amber-50'
+              ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20'
+              : 'border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20'
           "
         >
           <div class="flex items-center justify-between">
@@ -61,7 +61,7 @@
               />
               <span
                 class="text-xs font-medium"
-                :class="webhookInfos[inbox.id]?.isRegistered ? 'text-green-700' : 'text-amber-700'"
+                :class="webhookInfos[inbox.id]?.isRegistered ? 'text-green-700 dark:text-green-400' : 'text-amber-700 dark:text-amber-400'"
               >
                 {{ webhookInfos[inbox.id]?.isRegistered ? 'Webhook Active' : 'Webhook Not Set' }}
               </span>
@@ -140,11 +140,11 @@
 
     <!-- How to set up -->
     <div class="card p-5">
-      <h2 class="text-sm font-semibold text-gray-700 mb-3">Setup Guide</h2>
+      <h2 class="text-sm font-semibold text-gray-700 dark:text-slate-300 mb-3">Setup Guide</h2>
       <ol class="space-y-2">
-        <li v-for="(step, i) in setupSteps" :key="i" class="flex gap-2.5 text-sm text-gray-600">
+        <li v-for="(step, i) in setupSteps" :key="i" class="flex gap-2.5 text-sm text-gray-600 dark:text-slate-400">
           <span
-            class="flex-shrink-0 w-5 h-5 rounded-full bg-sky-100 text-sky-700 text-xs font-bold flex items-center justify-center mt-0.5"
+            class="flex-shrink-0 w-5 h-5 rounded-full bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-400 text-xs font-bold flex items-center justify-center mt-0.5"
             >{{ i + 1 }}</span
           >
           <span>{{ step }}</span>
@@ -174,12 +174,12 @@
             leave-from="opacity-100 scale-100"
             leave-to="opacity-0 scale-95"
           >
-            <DialogPanel class="card p-6 w-full max-w-md shadow-xl">
-              <DialogTitle class="text-base font-semibold text-gray-900 mb-4"
+            <DialogPanel class="card p-6 w-full max-w-md shadow-dialog">
+              <DialogTitle class="text-base font-semibold text-gray-900 dark:text-slate-100 mb-4"
                 >Connect Telegram Bot</DialogTitle
               >
 
-              <div class="rounded-lg bg-sky-50 border border-sky-200 p-3 mb-4 text-sm text-sky-700">
+              <div class="rounded-lg bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800 p-3 mb-4 text-sm text-sky-700 dark:text-sky-400">
                 Create a bot with <strong>@BotFather</strong> on Telegram and paste the token below.
               </div>
 
@@ -198,7 +198,7 @@
                       placeholder="123456:ABC-DEF…"
                     />
                     <button
-                      class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600 px-1"
+                      class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 px-1"
                       type="button"
                       @click="showToken = !showToken"
                     >
@@ -210,7 +210,7 @@
                 <!-- Validated bot preview -->
                 <div
                   v-if="validatedBot"
-                  class="rounded-lg bg-green-50 border border-green-200 p-3 flex items-center gap-3"
+                  class="rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 p-3 flex items-center gap-3"
                 >
                   <div
                     class="w-8 h-8 rounded-full bg-sky-500 flex items-center justify-center flex-shrink-0"
@@ -218,7 +218,7 @@
                     <PaperAirplaneIcon class="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <p class="text-sm font-medium text-gray-900">{{ validatedBot.first_name }}</p>
+                    <p class="text-sm font-medium text-gray-900 dark:text-slate-100">{{ validatedBot.first_name }}</p>
                     <p class="text-xs text-sky-600 font-mono">@{{ validatedBot.username }}</p>
                   </div>
                   <CheckCircleIcon class="w-5 h-5 text-green-500 ml-auto flex-shrink-0" />
@@ -294,6 +294,7 @@ const {
   validateBot,
 } = useTelegram()
 
+const toast = useToast()
 const connectDialog = ref(false)
 const confirmDeleteDialog = ref(false)
 const deleteId = ref<string | null>(null)
@@ -330,6 +331,9 @@ async function connectBot() {
   const inbox = await addInbox(form.name, form.botToken.trim())
   if (!error.value && inbox) {
     closeConnectDialog()
+    toast.success('Telegram bot connected')
+  } else if (error.value) {
+    toast.error(error.value)
   }
 }
 
@@ -342,10 +346,20 @@ function closeConnectDialog() {
 
 async function registerWebhook(inboxId: string) {
   await setWebhook(inboxId)
+  if (!error.value) {
+    toast.success('Webhook registered')
+  } else {
+    toast.error(error.value)
+  }
 }
 
 async function removeWebhook(inboxId: string) {
   await deleteWebhook(inboxId)
+  if (!error.value) {
+    toast.success('Webhook removed')
+  } else {
+    toast.error(error.value)
+  }
 }
 
 function confirmDelete(id: string) {
@@ -354,6 +368,13 @@ function confirmDelete(id: string) {
 }
 
 async function doDelete() {
-  if (deleteId.value) await deleteInbox(deleteId.value)
+  if (deleteId.value) {
+    await deleteInbox(deleteId.value)
+    if (!error.value) {
+      toast.success('Bot removed')
+    } else {
+      toast.error(error.value)
+    }
+  }
 }
 </script>

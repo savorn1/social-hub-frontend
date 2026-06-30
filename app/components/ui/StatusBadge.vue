@@ -11,10 +11,10 @@ import type { ConversationStatus } from '~/types'
 defineProps<{ status: ConversationStatus }>()
 
 const styles: Record<string, string> = {
-  open: 'bg-emerald-50 text-emerald-700',
-  pending: 'bg-amber-50 text-amber-700',
-  resolved: 'bg-violet-50 text-violet-700',
-  closed: 'bg-gray-100 text-gray-500',
+  open: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400',
+  pending: 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400',
+  resolved: 'bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400',
+  closed: 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400',
 }
 
 const dots: Record<string, string> = {

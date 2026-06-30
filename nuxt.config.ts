@@ -5,6 +5,12 @@ export default defineNuxtConfig({
 
   modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt', '@vueuse/nuxt', '@nuxt/eslint'],
 
+  tailwindcss: {
+    config: {
+      darkMode: 'class',
+    },
+  },
+
   runtimeConfig: {
     public: {
       baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'http://localhost:3000',

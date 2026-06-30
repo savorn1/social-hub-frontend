@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-col h-full bg-white">
+  <div class="flex flex-col h-full bg-white dark:bg-slate-900">
     <!-- Header -->
-    <div class="flex items-center gap-3 px-5 py-3 border-b border-gray-100 bg-white flex-shrink-0">
+    <div class="flex items-center gap-3 px-5 py-3 border-b border-gray-100 dark:border-slate-700 bg-white dark:bg-slate-900 flex-shrink-0">
       <div
         class="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 shadow-sm"
         :class="platformColor(conversation.platform)"
@@ -9,13 +9,13 @@
         {{ (conversation.contactName || conversation.contactId || '?').charAt(0).toUpperCase() }}
       </div>
       <div class="flex-1 min-w-0">
-        <p class="text-sm font-semibold text-gray-900 truncate leading-tight">
+        <p class="text-sm font-semibold text-gray-900 dark:text-slate-100 truncate leading-tight">
           {{ conversation.contactName || conversation.contactId }}
         </p>
         <div class="flex items-center gap-1.5 mt-0.5">
           <PlatformBadge :platform="conversation.platform" />
           <StatusBadge :status="conversation.status" />
-          <span v-if="conversation.assignedAgent" class="text-[11px] text-gray-400">
+          <span v-if="conversation.assignedAgent" class="text-[11px] text-gray-400 dark:text-slate-500">
             → {{ conversation.assignedAgent.firstName }} {{ conversation.assignedAgent.lastName }}
           </span>
         </div>
@@ -27,8 +27,8 @@
           class="text-xs px-2.5 py-1.5 rounded-lg border font-medium transition-all flex items-center gap-1.5"
           :class="
             conversation.handoverMode
-              ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100'
-              : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300 hover:text-gray-700'
+              ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900/40'
+              : 'bg-white dark:bg-slate-800 text-gray-500 dark:text-slate-400 border-gray-200 dark:border-slate-600 hover:border-gray-300 dark:hover:border-slate-500 hover:text-gray-700 dark:hover:text-slate-300'
           "
           :title="
             conversation.handoverMode
@@ -44,7 +44,7 @@
         <!-- Assign agent -->
         <div ref="assignRef" class="relative">
           <button
-            class="text-xs px-2.5 py-1.5 rounded-lg border border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-700 flex items-center gap-1.5 transition-colors"
+            class="text-xs px-2.5 py-1.5 rounded-lg border border-gray-200 dark:border-slate-600 text-gray-500 dark:text-slate-400 hover:border-gray-300 dark:hover:border-slate-500 hover:text-gray-700 dark:hover:text-slate-300 flex items-center gap-1.5 transition-colors"
             @click="assignOpen = !assignOpen"
           >
             <UserIcon class="w-3.5 h-3.5" />
@@ -52,14 +52,14 @@
           </button>
           <div
             v-if="assignOpen"
-            class="absolute right-0 top-full mt-1.5 w-52 bg-white border border-gray-100 rounded-xl shadow-lg shadow-gray-200/60 z-20 overflow-hidden"
+            class="absolute right-0 top-full mt-1.5 w-52 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-xl shadow-lg shadow-gray-200/60 dark:shadow-black/30 z-20 overflow-hidden"
           >
-            <div v-if="agentsLoading" class="px-3 py-3 text-xs text-gray-400 text-center">
+            <div v-if="agentsLoading" class="px-3 py-3 text-xs text-gray-400 dark:text-slate-500 text-center">
               Loading…
             </div>
             <template v-else>
               <button
-                class="w-full text-left px-3 py-2.5 text-xs text-gray-400 hover:bg-gray-50 border-b border-gray-50"
+                class="w-full text-left px-3 py-2.5 text-xs text-gray-400 dark:text-slate-500 hover:bg-gray-50 dark:hover:bg-slate-700 border-b border-gray-50 dark:border-slate-700"
                 @click="assign(null)"
               >
                 Unassign
@@ -67,16 +67,16 @@
               <button
                 v-for="agent in agents"
                 :key="agent.id"
-                class="w-full text-left px-3 py-2.5 text-xs hover:bg-blue-50 hover:text-blue-700 flex items-center gap-2.5 transition-colors"
+                class="w-full text-left px-3 py-2.5 text-xs hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-700 dark:hover:text-blue-400 flex items-center gap-2.5 transition-colors"
                 :class="
                   conversation.assignedAgentId === agent.id
-                    ? 'bg-blue-50 text-blue-700 font-semibold'
-                    : 'text-gray-700'
+                    ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-semibold'
+                    : 'text-gray-700 dark:text-slate-300'
                 "
                 @click="assign(agent.id)"
               >
                 <span
-                  class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-700 flex-shrink-0"
+                  class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center text-[10px] font-bold text-blue-700 dark:text-blue-400 flex-shrink-0"
                 >
                   {{ initials(`${agent.firstName} ${agent.lastName}`) }}
                 </span>
@@ -95,7 +95,7 @@
             :class="
               conversation.status === s.value
                 ? s.activeClass
-                : 'bg-white text-gray-400 border-gray-200 hover:border-gray-300 hover:text-gray-600'
+                : 'bg-white dark:bg-slate-800 text-gray-400 dark:text-slate-500 border-gray-200 dark:border-slate-600 hover:border-gray-300 dark:hover:border-slate-500 hover:text-gray-600 dark:hover:text-slate-300'
             "
             @click="emit('updateStatus', s.value)"
           >
@@ -107,18 +107,18 @@
 
     <!-- Secondary action bar -->
     <div
-      class="flex items-center gap-2 px-4 py-2 border-b border-gray-100 bg-gray-50/50 flex-shrink-0 flex-wrap"
+      class="flex items-center gap-2 px-4 py-2 border-b border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50 flex-shrink-0 flex-wrap"
     >
       <!-- Tab switcher -->
       <div
-        class="flex rounded-lg bg-white border border-gray-200 overflow-hidden text-xs p-0.5 gap-0.5 mr-1"
+        class="flex rounded-lg bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 overflow-hidden text-xs p-0.5 gap-0.5 mr-1"
       >
         <button
           class="px-3 py-1 font-medium rounded-md transition-all duration-150"
           :class="
             activeTab === 'chat'
               ? 'bg-blue-600 text-white shadow-sm'
-              : 'text-gray-500 hover:bg-gray-50'
+              : 'text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-600'
           "
           @click="activeTab = 'chat'"
         >
@@ -129,7 +129,7 @@
           :class="
             activeTab === 'notes'
               ? 'bg-amber-500 text-white shadow-sm'
-              : 'text-gray-500 hover:bg-gray-50'
+              : 'text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-600'
           "
           @click="activeTab = 'notes'"
         >
@@ -150,12 +150,12 @@
         </button>
         <div
           v-if="priorityOpen"
-          class="absolute left-0 top-full mt-1.5 w-36 bg-white border border-gray-100 rounded-xl shadow-lg shadow-gray-200/60 z-20 overflow-hidden py-0.5"
+          class="absolute left-0 top-full mt-1.5 w-36 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-xl shadow-lg shadow-gray-200/60 dark:shadow-black/30 z-20 overflow-hidden py-0.5"
         >
           <button
             v-for="p in priorities"
             :key="p.value"
-            class="w-full text-left px-3 py-2 text-xs flex items-center gap-2 hover:bg-gray-50 transition-colors"
+            class="w-full text-left px-3 py-2 text-xs flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
             :class="p.color"
             @click="setPriority(p.value)"
           >
@@ -170,21 +170,21 @@
         <span
           v-for="label in conversation.labels"
           :key="label"
-          class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 font-medium border border-violet-100"
+          class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400 font-medium border border-violet-100 dark:border-violet-800"
         >
           {{ label }}
           <button class="hover:text-violet-900 leading-none" @click="removeLabel(label)">×</button>
         </span>
         <div ref="labelRef" class="relative">
           <button
-            class="text-[11px] px-2 py-0.5 rounded-full border border-dashed border-gray-300 text-gray-400 hover:border-violet-300 hover:text-violet-500 transition-colors"
+            class="text-[11px] px-2 py-0.5 rounded-full border border-dashed border-gray-300 dark:border-slate-600 text-gray-400 dark:text-slate-500 hover:border-violet-300 hover:text-violet-500 transition-colors"
             @click="labelInputOpen = !labelInputOpen"
           >
             + label
           </button>
           <div
             v-if="labelInputOpen"
-            class="absolute left-0 top-full mt-1.5 z-20 bg-white border border-gray-100 rounded-xl shadow-lg p-2 w-44"
+            class="absolute left-0 top-full mt-1.5 z-20 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-xl shadow-lg dark:shadow-black/30 p-2 w-44"
           >
             <input
               ref="labelInputEl"
@@ -202,7 +202,7 @@
 
       <!-- Archive button -->
       <button
-        class="text-xs px-2.5 py-1.5 rounded-lg border border-gray-200 text-gray-400 hover:border-gray-300 hover:text-gray-600 flex items-center gap-1.5 transition-colors"
+        class="text-xs px-2.5 py-1.5 rounded-lg border border-gray-200 dark:border-slate-600 text-gray-400 dark:text-slate-500 hover:border-gray-300 dark:hover:border-slate-500 hover:text-gray-600 dark:hover:text-slate-300 flex items-center gap-1.5 transition-colors"
         :title="conversation.isArchived ? 'Unarchive' : 'Archive conversation'"
         @click="emit('archive', !conversation.isArchived)"
       >
@@ -212,21 +212,21 @@
     </div>
 
     <!-- Notes panel -->
-    <div v-if="activeTab === 'notes'" class="flex flex-col flex-1 overflow-hidden bg-amber-50/30">
+    <div v-if="activeTab === 'notes'" class="flex flex-col flex-1 overflow-hidden bg-amber-50/30 dark:bg-amber-900/5">
       <div class="flex-1 overflow-y-auto px-5 py-4 space-y-3">
-        <p v-if="!store.notes.length" class="text-sm text-gray-400 text-center mt-10 italic">
+        <p v-if="!store.notes.length" class="text-sm text-gray-400 dark:text-slate-500 text-center mt-10 italic">
           No internal notes yet
         </p>
         <div
           v-for="note in store.notes"
           :key="note.id"
-          class="bg-white border border-amber-100 rounded-xl px-4 py-3 shadow-sm"
+          class="bg-white dark:bg-slate-800 border border-amber-100 dark:border-amber-900/40 rounded-xl px-4 py-3 shadow-sm"
         >
-          <p class="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">
+          <p class="text-sm text-gray-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed">
             {{ note.content }}
           </p>
-          <div class="flex items-center justify-between mt-2.5 pt-2 border-t border-amber-50">
-            <span class="text-[11px] text-gray-400">{{ formatDate(note.createdAt) }}</span>
+          <div class="flex items-center justify-between mt-2.5 pt-2 border-t border-amber-50 dark:border-slate-700">
+            <span class="text-[11px] text-gray-400 dark:text-slate-500">{{ formatDate(note.createdAt) }}</span>
             <button
               class="text-[11px] text-red-400 hover:text-red-600 transition-colors"
               @click="store.deleteNote(note.id)"
@@ -236,7 +236,7 @@
           </div>
         </div>
       </div>
-      <div class="flex gap-2 px-4 py-3 border-t border-amber-100 bg-white flex-shrink-0">
+      <div class="flex gap-2 px-4 py-3 border-t border-amber-100 dark:border-slate-700 bg-white dark:bg-slate-900 flex-shrink-0">
         <textarea
           v-model="noteDraft"
           rows="2"
@@ -256,7 +256,7 @@
     </div>
 
     <!-- Messages -->
-    <div v-else ref="scrollEl" class="flex-1 overflow-y-auto px-5 py-5 space-y-3 bg-gray-50/40">
+    <div v-else ref="scrollEl" class="flex-1 overflow-y-auto px-5 py-5 space-y-3 bg-gray-50/40 dark:bg-slate-950/30">
       <div
         v-for="msg in messages"
         :key="msg.id"
@@ -276,7 +276,7 @@
             class="px-4 py-2.5 rounded-2xl text-sm leading-relaxed shadow-sm"
             :class="
               msg.isFromContact
-                ? 'bg-white border border-gray-100 text-gray-800 rounded-bl-md'
+                ? 'bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 text-gray-800 dark:text-slate-200 rounded-bl-md'
                 : 'bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-br-md'
             "
           >
@@ -310,7 +310,7 @@
           </div>
           <p
             class="text-[10px] mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150"
-            :class="msg.isFromContact ? 'text-gray-400 pl-1' : 'text-gray-400 text-right pr-1'"
+            :class="msg.isFromContact ? 'text-gray-400 dark:text-slate-500 pl-1' : 'text-gray-400 dark:text-slate-500 text-right pr-1'"
           >
             {{ formatDate(msg.createdAt) }}
           </p>
@@ -320,21 +320,21 @@
       <!-- Typing indicator -->
       <div v-if="typingUsers?.length" class="flex items-end gap-2 justify-start">
         <div
-          class="bg-white border border-gray-100 px-4 py-2.5 rounded-2xl rounded-bl-md shadow-sm flex items-center gap-1.5"
+          class="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 px-4 py-2.5 rounded-2xl rounded-bl-md shadow-sm flex items-center gap-1.5"
         >
           <span
-            class="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce"
+            class="w-1.5 h-1.5 rounded-full bg-gray-400 dark:bg-slate-500 animate-bounce"
             style="animation-delay: 0ms"
           />
           <span
-            class="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce"
+            class="w-1.5 h-1.5 rounded-full bg-gray-400 dark:bg-slate-500 animate-bounce"
             style="animation-delay: 150ms"
           />
           <span
-            class="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce"
+            class="w-1.5 h-1.5 rounded-full bg-gray-400 dark:bg-slate-500 animate-bounce"
             style="animation-delay: 300ms"
           />
-          <span class="text-xs text-gray-400 ml-1">{{ typingLabel }}</span>
+          <span class="text-xs text-gray-400 dark:text-slate-500 ml-1">{{ typingLabel }}</span>
         </div>
       </div>
 
@@ -356,30 +356,30 @@
     <!-- Canned responses picker -->
     <div
       v-if="activeTab === 'chat' && cannedOpen && activePrompts.length"
-      class="border-t border-gray-100 bg-white max-h-44 overflow-y-auto shadow-[0_-4px_12px_rgba(0,0,0,0.04)]"
+      class="border-t border-gray-100 dark:border-slate-700 bg-white dark:bg-slate-900 max-h-44 overflow-y-auto shadow-[0_-4px_12px_rgba(0,0,0,0.04)] dark:shadow-none"
     >
-      <p class="px-4 pt-2.5 pb-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+      <p class="px-4 pt-2.5 pb-1 text-[10px] font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider">
         Quick replies
       </p>
       <button
         v-for="prompt in activePrompts"
         :key="prompt.id"
-        class="w-full text-left px-4 py-2.5 text-sm hover:bg-blue-50 transition-colors border-b border-gray-50 last:border-0"
+        class="w-full text-left px-4 py-2.5 text-sm hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors border-b border-gray-50 dark:border-slate-700/50 last:border-0"
         @click="insertCanned(prompt.content)"
       >
-        <span class="font-medium text-gray-800">{{ prompt.name }}</span>
-        <span class="text-gray-400 ml-2 text-xs">{{ truncate(prompt.content, 55) }}</span>
+        <span class="font-medium text-gray-800 dark:text-slate-200">{{ prompt.name }}</span>
+        <span class="text-gray-400 dark:text-slate-500 ml-2 text-xs">{{ truncate(prompt.content, 55) }}</span>
       </button>
     </div>
 
     <!-- Input -->
     <div
       v-if="activeTab === 'chat'"
-      class="flex items-end gap-2 px-4 py-3 border-t border-gray-100 bg-white flex-shrink-0"
+      class="flex items-end gap-2 px-4 py-3 border-t border-gray-100 dark:border-slate-700 bg-white dark:bg-slate-900 flex-shrink-0"
     >
       <input ref="fileInput" type="file" class="hidden" @change="onFileChange" />
       <button
-        class="flex-shrink-0 p-2 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+        class="flex-shrink-0 p-2 rounded-lg text-gray-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
         title="Attach file"
         @click="fileInput?.click()"
       >
@@ -389,8 +389,8 @@
         class="flex-shrink-0 p-2 rounded-lg transition-colors"
         :class="
           cannedOpen
-            ? 'text-blue-600 bg-blue-50'
-            : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'
+            ? 'text-blue-600 bg-blue-50 dark:bg-blue-900/20'
+            : 'text-gray-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20'
         "
         title="Quick replies"
         @click="toggleCanned"
@@ -401,7 +401,7 @@
         v-model="draft"
         rows="1"
         placeholder="Type a message… (Enter to send)"
-        class="flex-1 input resize-none max-h-28 overflow-y-auto text-sm border-gray-200"
+        class="flex-1 input resize-none max-h-28 overflow-y-auto text-sm border-gray-200 dark:border-slate-600"
         style="field-sizing: content"
         @keydown.enter.exact.prevent="send"
         @input="onInput"

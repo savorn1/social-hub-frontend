@@ -21,11 +21,11 @@
           leave-from="opacity-100 scale-100"
           leave-to="opacity-0 scale-95"
         >
-          <DialogPanel class="card p-6 w-full max-w-sm shadow-xl">
-            <DialogTitle class="text-base font-semibold text-gray-900 mb-2">{{
+          <DialogPanel class="card p-6 w-full max-w-sm shadow-dialog">
+            <DialogTitle class="text-base font-semibold text-gray-900 dark:text-slate-100 mb-2">{{
               title ?? 'Confirm'
             }}</DialogTitle>
-            <p class="text-sm text-gray-600">{{ message }}</p>
+            <p class="text-sm text-gray-600 dark:text-slate-400">{{ message }}</p>
             <div class="flex justify-end gap-3 mt-6">
               <button class="btn-secondary" @click="emit('update:modelValue', false)">
                 Cancel

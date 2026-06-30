@@ -2,8 +2,8 @@
   <div class="p-6">
     <div class="flex items-center justify-between mb-6">
       <div>
-        <h1 class="text-xl font-bold text-gray-900">Prompt Templates</h1>
-        <p class="text-sm text-gray-500 mt-0.5">Manage reusable AI prompt templates</p>
+        <h1 class="text-xl font-bold text-gray-900 dark:text-slate-100">Prompt Templates</h1>
+        <p class="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Manage reusable AI prompt templates</p>
       </div>
       <button class="btn-primary" @click="openCreate">
         <PlusIcon class="w-4 h-4" /> New Prompt
@@ -11,7 +11,7 @@
     </div>
 
     <!-- Category tabs -->
-    <div class="flex gap-1 mb-5 border-b border-gray-200">
+    <div class="flex gap-1 mb-5 border-b border-gray-200 dark:border-slate-700">
       <button
         v-for="tab in categoryTabs"
         :key="tab.value ?? 'all'"
@@ -19,7 +19,7 @@
         :class="
           activeCategory === tab.value
             ? 'border-blue-600 text-blue-600'
-            : 'border-transparent text-gray-500 hover:text-gray-700'
+            : 'border-transparent text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-300'
         "
         @click="setCategory(tab.value)"
       >
@@ -35,8 +35,8 @@
     <!-- Skeleton -->
     <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div v-for="i in 4" :key="i" class="card p-5 animate-pulse space-y-3">
-        <div class="h-5 bg-gray-100 rounded w-1/2" />
-        <div class="h-16 bg-gray-100 rounded" />
+        <div class="h-5 bg-gray-100 dark:bg-slate-700 rounded w-1/2" />
+        <div class="h-16 bg-gray-100 dark:bg-slate-700 rounded" />
       </div>
     </div>
 
@@ -49,7 +49,7 @@
               :class="categoryStyle(p.category)"
               >{{ p.category }}</span
             >
-            <p class="font-semibold text-gray-900 text-sm truncate">{{ p.name }}</p>
+            <p class="font-semibold text-gray-900 dark:text-slate-100 text-sm truncate">{{ p.name }}</p>
           </div>
           <div class="flex gap-2 flex-shrink-0">
             <button
@@ -65,10 +65,10 @@
           </div>
         </div>
 
-        <p v-if="p.description" class="text-xs text-gray-500">{{ p.description }}</p>
+        <p v-if="p.description" class="text-xs text-gray-500 dark:text-slate-400">{{ p.description }}</p>
 
         <pre
-          class="text-xs bg-gray-50 border border-gray-100 rounded-lg p-3 overflow-hidden max-h-24 text-gray-700 whitespace-pre-wrap"
+          class="text-xs bg-gray-50 dark:bg-slate-700/50 border border-gray-100 dark:border-slate-600 rounded-lg p-3 overflow-hidden max-h-24 text-gray-700 dark:text-slate-300 whitespace-pre-wrap"
           >{{ p.content.slice(0, 200) }}{{ p.content.length > 200 ? '…' : '' }}</pre>
 
         <div v-if="p.variables?.length" class="flex flex-wrap gap-1.5">
@@ -96,8 +96,8 @@
       <Dialog class="relative z-50" @close="closeDialog">
         <div class="dialog-overlay" />
         <div class="fixed inset-0 flex items-center justify-center p-4">
-          <DialogPanel class="card p-6 w-full max-w-lg shadow-xl">
-            <DialogTitle class="text-base font-semibold text-gray-900 mb-4">
+          <DialogPanel class="card p-6 w-full max-w-lg shadow-dialog">
+            <DialogTitle class="text-base font-semibold text-gray-900 dark:text-slate-100 mb-4">
               {{ editingId ? 'Edit Prompt' : 'New Prompt' }}
             </DialogTitle>
             <div class="space-y-3">
@@ -127,7 +127,7 @@
               </div>
               <div>
                 <label class="label">Content</label>
-                <p class="text-xs text-gray-400 mb-1">
+                <p class="text-xs text-gray-400 dark:text-slate-500 mb-1">
                   Use &#123;&#123;variable&#125;&#125; syntax for dynamic values
                 </p>
                 <textarea v-model="form.content" class="input font-mono text-xs" rows="7" />
@@ -164,11 +164,11 @@
       <Dialog class="relative z-50" @close="historyDialog = false">
         <div class="dialog-overlay" />
         <div class="fixed inset-0 flex items-center justify-center p-4">
-          <DialogPanel class="card p-6 w-full max-w-xl shadow-xl max-h-[80vh] flex flex-col">
-            <DialogTitle class="text-base font-semibold text-gray-900 mb-1">
+          <DialogPanel class="card p-6 w-full max-w-xl shadow-dialog max-h-[80vh] flex flex-col">
+            <DialogTitle class="text-base font-semibold text-gray-900 dark:text-slate-100 mb-1">
               Version History
             </DialogTitle>
-            <p class="text-xs text-gray-400 mb-4">{{ historyPrompt?.name }}</p>
+            <p class="text-xs text-gray-400 dark:text-slate-500 mb-4">{{ historyPrompt?.name }}</p>
 
             <div v-if="versionsLoading" class="flex justify-center py-8">
               <svg class="w-5 h-5 animate-spin text-blue-400" fill="none" viewBox="0 0 24 24">
@@ -184,7 +184,7 @@
               </svg>
             </div>
 
-            <div v-else-if="!versions.length" class="text-sm text-gray-400 text-center py-8">
+            <div v-else-if="!versions.length" class="text-sm text-gray-400 dark:text-slate-500 text-center py-8">
               No previous versions. Edit the content to start tracking versions.
             </div>
 
@@ -192,12 +192,12 @@
               <div
                 v-for="v in versions"
                 :key="v.id"
-                class="border border-gray-200 rounded-xl p-4 space-y-2"
+                class="border border-gray-200 dark:border-slate-700 rounded-xl p-4 space-y-2"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-xs font-semibold text-gray-700">Version {{ v.version }}</span>
+                  <span class="text-xs font-semibold text-gray-700 dark:text-slate-300">Version {{ v.version }}</span>
                   <div class="flex items-center gap-3">
-                    <span class="text-[11px] text-gray-400">{{ formatDate(v.createdAt) }}</span>
+                    <span class="text-[11px] text-gray-400 dark:text-slate-500">{{ formatDate(v.createdAt) }}</span>
                     <button
                       class="text-xs text-blue-600 hover:underline font-medium"
                       @click="restore(v)"
@@ -207,7 +207,7 @@
                   </div>
                 </div>
                 <pre
-                  class="text-xs text-gray-600 bg-gray-50 rounded-lg p-2.5 max-h-28 overflow-hidden whitespace-pre-wrap"
+                  class="text-xs text-gray-600 dark:text-slate-300 bg-gray-50 dark:bg-slate-700/50 rounded-lg p-2.5 max-h-28 overflow-hidden whitespace-pre-wrap"
                   >{{ v.content.slice(0, 300) }}{{ v.content.length > 300 ? '…' : '' }}</pre>
               </div>
             </div>
@@ -240,6 +240,7 @@ import { wrapVar, formatDate } from '~/utils'
 definePageMeta({ middleware: 'auth' })
 
 const promptsService = usePromptsService()
+const toast = useToast()
 
 const prompts = ref<Prompt[]>([])
 const loading = ref(false)
@@ -327,11 +328,15 @@ async function save() {
   try {
     if (editingId.value) {
       await promptsService.update(editingId.value, { ...form })
+      toast.success('Prompt updated')
     } else {
       await promptsService.create({ ...form })
+      toast.success('Prompt created')
     }
     await load()
     closeDialog()
+  } catch {
+    toast.error('Failed to save prompt')
   } finally {
     saving.value = false
   }
@@ -344,9 +349,14 @@ function confirmRemove(id: string) {
 
 async function remove() {
   if (removeId.value) {
-    await promptsService.remove(removeId.value)
-    await load()
-    removeId.value = null
+    try {
+      await promptsService.remove(removeId.value)
+      await load()
+      removeId.value = null
+      toast.success('Prompt deleted')
+    } catch {
+      toast.error('Failed to delete prompt')
+    }
   }
 }
 
@@ -363,8 +373,13 @@ async function openHistory(p: Prompt) {
 
 async function restore(v: PromptVersion) {
   if (!historyPrompt.value) return
-  await promptsService.restore(historyPrompt.value.id, v.id)
-  historyDialog.value = false
-  await load()
+  try {
+    await promptsService.restore(historyPrompt.value.id, v.id)
+    historyDialog.value = false
+    await load()
+    toast.success(`Restored to version ${v.version}`)
+  } catch {
+    toast.error('Failed to restore version')
+  }
 }
 </script>

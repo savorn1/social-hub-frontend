@@ -1,9 +1,9 @@
 <template>
   <div class="flex h-full overflow-hidden">
     <!-- Conversation sidebar -->
-    <div class="w-80 flex-shrink-0 flex flex-col border-r border-gray-200 bg-white overflow-hidden">
+    <div class="w-80 flex-shrink-0 flex flex-col border-r border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
       <!-- Status tabs -->
-      <div class="flex border-b border-gray-100 px-2 pt-2 gap-0.5">
+      <div class="flex border-b border-gray-100 dark:border-slate-700 px-2 pt-2 gap-0.5">
         <button
           v-for="s in statusTabs"
           :key="s.value"
@@ -11,7 +11,7 @@
           :class="
             store.statusFilter === s.value
               ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-gray-400 hover:text-gray-600 border-b-2 border-transparent'
+              : 'text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 border-b-2 border-transparent'
           "
           @click="setStatus(s.value)"
         >
@@ -20,11 +20,11 @@
       </div>
 
       <!-- Archive toggle -->
-      <div class="flex items-center justify-between px-3 py-1.5 border-b border-gray-100">
-        <span class="text-xs text-gray-500">Archived</span>
+      <div class="flex items-center justify-between px-3 py-1.5 border-b border-gray-100 dark:border-slate-700">
+        <span class="text-xs text-gray-500 dark:text-slate-400">Archived</span>
         <button
           class="relative inline-flex h-4 w-8 items-center rounded-full transition-colors"
-          :class="store.showArchived ? 'bg-blue-600' : 'bg-gray-200'"
+          :class="store.showArchived ? 'bg-blue-600' : 'bg-gray-200 dark:bg-slate-600'"
           @click="toggleArchived"
         >
           <span
@@ -35,7 +35,7 @@
       </div>
 
       <!-- Platform pills -->
-      <div class="flex gap-1.5 px-3 py-2 border-b border-gray-100 overflow-x-auto scrollbar-thin">
+      <div class="flex gap-1.5 px-3 py-2 border-b border-gray-100 dark:border-slate-700 overflow-x-auto scrollbar-thin">
         <button
           v-for="p in platformOptions"
           :key="p.value ?? 'all'"
@@ -43,7 +43,7 @@
           :class="
             store.platformFilter === p.value
               ? 'bg-blue-600 text-white'
-              : 'bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700'
+              : 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400 hover:bg-gray-200 dark:hover:bg-slate-600 hover:text-gray-700 dark:hover:text-slate-200'
           "
           @click="setPlatform(p.value)"
         >

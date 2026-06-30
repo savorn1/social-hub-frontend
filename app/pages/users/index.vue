@@ -2,8 +2,8 @@
   <div class="p-6">
     <div class="flex items-center justify-between mb-6">
       <div>
-        <h1 class="text-xl font-bold text-gray-900">Users</h1>
-        <p class="text-sm text-gray-500 mt-0.5">Manage team members and agents</p>
+        <h1 class="text-xl font-bold text-gray-900 dark:text-slate-100">Users</h1>
+        <p class="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Manage team members and agents</p>
       </div>
       <button class="btn-primary" @click="dialog = true">
         <PlusIcon class="w-4 h-4" /> Invite User
@@ -12,45 +12,45 @@
 
     <div class="card overflow-hidden">
       <table class="w-full text-sm">
-        <thead class="bg-gray-50/80 border-b border-gray-100">
+        <thead class="bg-gray-50/80 dark:bg-slate-700/50 border-b border-gray-100 dark:border-slate-700">
           <tr>
             <th
-              class="text-left px-5 py-3.5 font-semibold text-gray-500 text-xs uppercase tracking-wide"
+              class="text-left px-5 py-3.5 font-semibold text-gray-500 dark:text-slate-400 text-xs uppercase tracking-wide"
             >
               User
             </th>
             <th
-              class="text-left px-5 py-3.5 font-semibold text-gray-500 text-xs uppercase tracking-wide"
+              class="text-left px-5 py-3.5 font-semibold text-gray-500 dark:text-slate-400 text-xs uppercase tracking-wide"
             >
               Roles
             </th>
             <th
-              class="text-left px-5 py-3.5 font-semibold text-gray-500 text-xs uppercase tracking-wide"
+              class="text-left px-5 py-3.5 font-semibold text-gray-500 dark:text-slate-400 text-xs uppercase tracking-wide"
             >
               Status
             </th>
             <th class="px-5 py-3.5" />
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-50">
+        <tbody class="divide-y divide-gray-50 dark:divide-slate-700">
           <tr v-if="loading">
             <td colspan="4">
               <div class="flex flex-col gap-0">
                 <div
                   v-for="i in 4"
                   :key="i"
-                  class="flex items-center gap-4 px-5 py-4 animate-pulse border-b border-gray-50"
+                  class="flex items-center gap-4 px-5 py-4 animate-pulse border-b border-gray-50 dark:border-slate-700"
                 >
-                  <div class="w-9 h-9 rounded-full bg-gray-100 flex-shrink-0" />
+                  <div class="w-9 h-9 rounded-full bg-gray-100 dark:bg-slate-700 flex-shrink-0" />
                   <div class="flex-1 space-y-1.5">
-                    <div class="h-3 bg-gray-100 rounded w-32" />
-                    <div class="h-2.5 bg-gray-100 rounded w-44" />
+                    <div class="h-3 bg-gray-100 dark:bg-slate-700 rounded w-32" />
+                    <div class="h-2.5 bg-gray-100 dark:bg-slate-700 rounded w-44" />
                   </div>
                 </div>
               </div>
             </td>
           </tr>
-          <tr v-for="u in users" :key="u.id" class="hover:bg-gray-50/60 transition-colors group">
+          <tr v-for="u in users" :key="u.id" class="hover:bg-gray-50/60 dark:hover:bg-slate-700/50 transition-colors group">
             <td class="px-5 py-3.5">
               <div class="flex items-center gap-3">
                 <div
@@ -61,10 +61,10 @@
                   }}</span>
                 </div>
                 <div>
-                  <p class="font-semibold text-gray-900 leading-tight">
+                  <p class="font-semibold text-gray-900 dark:text-slate-100 leading-tight">
                     {{ u.firstName }} {{ u.lastName }}
                   </p>
-                  <p class="text-xs text-gray-400 mt-0.5">{{ u.email }}</p>
+                  <p class="text-xs text-gray-400 dark:text-slate-500 mt-0.5">{{ u.email }}</p>
                 </div>
               </div>
             </td>
@@ -73,7 +73,7 @@
                 <span
                   v-for="r in u.roles"
                   :key="r.id"
-                  class="badge bg-indigo-50 text-indigo-700 border border-indigo-100"
+                  class="badge bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800"
                   >{{ r.name }}</span
                 >
               </div>
@@ -83,8 +83,8 @@
                 class="inline-flex items-center gap-1 badge"
                 :class="
                   u.status === 'active'
-                    ? 'bg-emerald-50 text-emerald-700'
-                    : 'bg-gray-100 text-gray-500'
+                    ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400'
+                    : 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400'
                 "
               >
                 <span
@@ -96,7 +96,7 @@
             </td>
             <td class="px-5 py-3.5 text-right">
               <button
-                class="text-xs text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all px-2.5 py-1 rounded-lg hover:bg-red-50"
+                class="text-xs text-gray-400 dark:text-slate-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all px-2.5 py-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
                 @click="removeUser(u.id)"
               >
                 Remove
@@ -121,28 +121,28 @@
       <Dialog class="relative z-50" @close="dialog = false">
         <div class="dialog-overlay" />
         <div class="fixed inset-0 flex items-center justify-center p-4">
-          <DialogPanel class="card p-6 w-full max-w-md shadow-xl">
-            <DialogTitle class="text-base font-semibold text-gray-900 mb-4"
+          <DialogPanel class="card p-6 w-full max-w-md shadow-dialog">
+            <DialogTitle class="text-base font-semibold text-gray-900 dark:text-slate-100 mb-4"
               >Invite User</DialogTitle
             >
             <div class="space-y-3">
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="label">First Name</label
-                  ><input v-model="form.firstName" class="input" />
+                  <label class="label">First Name <span class="text-red-400">*</span></label>
+                  <input v-model="form.firstName" class="input" placeholder="John" />
                 </div>
                 <div>
-                  <label class="label">Last Name</label
-                  ><input v-model="form.lastName" class="input" />
+                  <label class="label">Last Name <span class="text-red-400">*</span></label>
+                  <input v-model="form.lastName" class="input" placeholder="Doe" />
                 </div>
               </div>
               <div>
-                <label class="label">Email</label
-                ><input v-model="form.email" class="input" type="email" />
+                <label class="label">Email <span class="text-red-400">*</span></label>
+                <input v-model="form.email" class="input" type="email" placeholder="john@example.com" />
               </div>
               <div>
-                <label class="label">Password</label
-                ><input v-model="form.password" class="input" type="password" />
+                <label class="label">Password <span class="text-red-400">*</span></label>
+                <input v-model="form.password" class="input" type="password" placeholder="Min. 8 characters" />
               </div>
               <div>
                 <label class="label mb-1.5 block">Roles</label>
@@ -153,8 +153,8 @@
                     class="flex items-center gap-2 px-2.5 py-1.5 rounded-lg border cursor-pointer text-xs font-medium transition-colors"
                     :class="
                       form.roleIds.includes(r.id)
-                        ? 'border-indigo-300 bg-indigo-50 text-indigo-700'
-                        : 'border-gray-100 hover:border-gray-200 text-gray-600'
+                        ? 'border-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400'
+                        : 'border-gray-100 dark:border-slate-600 hover:border-gray-200 dark:hover:border-slate-500 text-gray-600 dark:text-slate-400'
                     "
                   >
                     <input
@@ -169,8 +169,14 @@
               </div>
             </div>
             <div class="flex justify-end gap-3 mt-6">
-              <button class="btn-secondary" @click="dialog = false">Cancel</button>
-              <button class="btn-primary" :disabled="saving" @click="invite">Invite</button>
+              <button class="btn-secondary" @click="closeDialog">Cancel</button>
+              <button
+                class="btn-primary"
+                :disabled="saving || !form.firstName.trim() || !form.lastName.trim() || !form.email.trim() || !form.password.trim()"
+                @click="invite"
+              >
+                Invite
+              </button>
             </div>
           </DialogPanel>
         </div>
@@ -188,6 +194,7 @@ import { initials } from '~/utils'
 definePageMeta({ middleware: 'auth' })
 
 const { $api } = useNuxtApp()
+const toast = useToast()
 const users = ref<User[]>([])
 const availableRoles = ref<Role[]>([])
 const loading = ref(false)
@@ -213,26 +220,42 @@ async function load() {
 }
 onMounted(load)
 
+function closeDialog() {
+  dialog.value = false
+  Object.assign(form, { firstName: '', lastName: '', email: '', password: '', roleIds: [] })
+}
+
 async function invite() {
   saving.value = true
-  const { data } = await $api.post('/users', {
-    firstName: form.firstName,
-    lastName: form.lastName,
-    email: form.email,
-    password: form.password,
-  })
-  const newUser = data.data
-  if (form.roleIds.length && newUser?.id) {
-    await $api.put(`/users/${newUser.id}/roles`, { roleIds: form.roleIds })
+  try {
+    const { data } = await $api.post('/users', {
+      firstName: form.firstName,
+      lastName: form.lastName,
+      email: form.email,
+      password: form.password,
+    })
+    const newUser = data.data
+    if (form.roleIds.length && newUser?.id) {
+      await $api.put(`/users/${newUser.id}/roles`, { roleIds: form.roleIds })
+    }
+    await load()
+    closeDialog()
+    toast.success('User invited successfully')
+  } catch (e: unknown) {
+    const msg = (e as { response?: { data?: { message?: string } } })?.response?.data?.message
+    toast.error(msg ?? 'Failed to invite user')
+  } finally {
+    saving.value = false
   }
-  await load()
-  dialog.value = false
-  form.roleIds = []
-  saving.value = false
 }
 
 async function removeUser(id: string) {
-  await $api.delete(`/users/${id}`)
-  await load()
+  try {
+    await $api.delete(`/users/${id}`)
+    await load()
+    toast.success('User removed')
+  } catch {
+    toast.error('Failed to remove user')
+  }
 }
 </script>
