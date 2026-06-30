@@ -192,7 +192,7 @@
           leave-from="opacity-100"
           leave-to="opacity-0"
         >
-          <div class="fixed inset-0 bg-black/40" />
+          <div class="dialog-overlay" />
         </TransitionChild>
         <div class="fixed inset-0 flex items-center justify-center p-4">
           <TransitionChild
@@ -316,7 +316,7 @@
           leave-from="opacity-100"
           leave-to="opacity-0"
         >
-          <div class="fixed inset-0 bg-black/40" />
+          <div class="dialog-overlay" />
         </TransitionChild>
         <div class="fixed inset-0 flex items-center justify-center p-4">
           <TransitionChild

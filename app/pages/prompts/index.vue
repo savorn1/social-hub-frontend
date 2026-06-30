@@ -94,7 +94,7 @@
     <!-- Create / Edit dialog -->
     <TransitionRoot :show="dialog" as="template">
       <Dialog class="relative z-50" @close="closeDialog">
-        <div class="fixed inset-0 bg-black/40" />
+        <div class="dialog-overlay" />
         <div class="fixed inset-0 flex items-center justify-center p-4">
           <DialogPanel class="card p-6 w-full max-w-lg shadow-xl">
             <DialogTitle class="text-base font-semibold text-gray-900 mb-4">
@@ -162,7 +162,7 @@
     <!-- Version history dialog -->
     <TransitionRoot :show="historyDialog" as="template">
       <Dialog class="relative z-50" @close="historyDialog = false">
-        <div class="fixed inset-0 bg-black/40" />
+        <div class="dialog-overlay" />
         <div class="fixed inset-0 flex items-center justify-center p-4">
           <DialogPanel class="card p-6 w-full max-w-xl shadow-xl max-h-[80vh] flex flex-col">
             <DialogTitle class="text-base font-semibold text-gray-900 mb-1">

@@ -34,27 +34,33 @@
       </button>
 
       <!-- Nav groups -->
-      <nav class="flex-1 overflow-y-auto py-3 px-2 space-y-5">
+      <nav class="flex-1 overflow-y-auto py-3 px-2 space-y-4 scrollbar-none">
         <div v-for="group in navGroups" :key="group.label">
           <p
             v-if="!collapsed"
-            class="px-2.5 mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-600 select-none"
+            class="px-2.5 mb-1 text-[10px] font-semibold uppercase tracking-widest text-gray-600 select-none"
           >
             {{ group.label }}
           </p>
+          <div v-if="collapsed" class="h-px bg-gray-800/60 mx-2 mb-1" />
           <div class="space-y-0.5">
             <NuxtLink
               v-for="item in group.items"
               :key="item.to"
               :to="item.to"
-              class="flex items-center gap-3 px-2.5 py-2 rounded-lg text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white transition-colors group/nav"
-              active-class="!bg-blue-600/20 !text-blue-300 hover:!bg-blue-600/25 hover:!text-blue-200"
+              :title="collapsed ? item.title : undefined"
+              class="flex items-center gap-3 px-2.5 py-2 rounded-lg text-sm font-medium text-gray-400 hover:bg-gray-800/80 hover:text-gray-100 transition-all duration-100 group/nav"
+              :class="collapsed ? 'justify-center' : ''"
+              active-class="!bg-blue-600/15 !text-blue-300 hover:!bg-blue-600/20 hover:!text-blue-200"
             >
               <div class="relative flex-shrink-0">
-                <component :is="item.icon" class="w-5 h-5" />
+                <component
+                  :is="item.icon"
+                  class="w-5 h-5 transition-transform duration-100 group-hover/nav:scale-110"
+                />
                 <span
                   v-if="item.dot"
-                  class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full border-2 border-gray-900"
+                  class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full border-[1.5px] border-gray-900"
                   :class="item.dot"
                 />
               </div>
@@ -134,6 +140,7 @@ import {
   UsersIcon,
   UserGroupIcon,
   ShareIcon,
+  ShieldCheckIcon,
 } from '@heroicons/vue/24/outline'
 import type { Component } from 'vue'
 import { initials } from '~/utils'
@@ -167,7 +174,7 @@ const navGroups: NavGroup[] = [
     items: [
       { title: 'Facebook', icon: ChatBubbleOvalLeftIcon, to: '/facebook', dot: 'bg-blue-500' },
       { title: 'Telegram', icon: ChatBubbleOvalLeftIcon, to: '/telegram', dot: 'bg-sky-400' },
-      // { title: 'WhatsApp',  icon: ChatBubbleOvalLeftIcon, to: '/whatsapp',  dot: 'bg-green-500' },
+      { title: 'WhatsApp', icon: ChatBubbleOvalLeftIcon, to: '/whatsapp', dot: 'bg-green-500' },
     ],
   },
   {
@@ -181,7 +188,10 @@ const navGroups: NavGroup[] = [
   },
   {
     label: 'Admin',
-    items: [{ title: 'Users', icon: UsersIcon, to: '/users' }],
+    items: [
+      { title: 'Users', icon: UsersIcon, to: '/users' },
+      { title: 'Roles', icon: ShieldCheckIcon, to: '/roles' },
+    ],
   },
 ]
 

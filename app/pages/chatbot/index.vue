@@ -76,7 +76,7 @@
     <!-- Create dialog -->
     <TransitionRoot :show="dialog" as="template">
       <Dialog class="relative z-50" @close="dialog = false">
-        <div class="fixed inset-0 bg-black/40" />
+        <div class="dialog-overlay" />
         <div class="fixed inset-0 flex items-center justify-center p-4">
           <DialogPanel class="card p-6 w-full max-w-md shadow-xl">
             <DialogTitle class="text-base font-semibold text-gray-900 mb-4"

@@ -47,8 +47,9 @@
     </div>
 
     <!-- Create / Edit Modal -->
-    <div v-if="modalOpen" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div class="bg-white rounded-xl shadow-xl w-full max-w-lg p-6">
+    <div v-if="modalOpen" class="fixed inset-0 flex items-center justify-center z-50">
+      <div class="dialog-overlay absolute inset-0" @click="modalOpen = false" />
+      <div class="relative bg-white rounded-xl shadow-xl w-full max-w-lg p-6 z-10">
         <h2 class="text-lg font-semibold mb-4">{{ editing ? 'Edit Rule' : 'New Rule' }}</h2>
 
         <div class="space-y-4">

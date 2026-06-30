@@ -1,20 +1,18 @@
 <template>
-  <div class="flex flex-col h-full">
+  <div class="flex flex-col h-full bg-white">
     <!-- Header -->
-    <div
-      class="flex items-center gap-3 px-5 py-3.5 border-b border-gray-200 bg-white flex-shrink-0 shadow-sm"
-    >
+    <div class="flex items-center gap-3 px-5 py-3 border-b border-gray-100 bg-white flex-shrink-0">
       <div
-        class="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 ring-2 ring-white shadow"
+        class="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 shadow-sm"
         :class="platformColor(conversation.platform)"
       >
         {{ (conversation.contactName || conversation.contactId || '?').charAt(0).toUpperCase() }}
       </div>
       <div class="flex-1 min-w-0">
-        <p class="text-sm font-semibold text-gray-900 truncate">
+        <p class="text-sm font-semibold text-gray-900 truncate leading-tight">
           {{ conversation.contactName || conversation.contactId }}
         </p>
-        <div class="flex items-center gap-2 mt-0.5">
+        <div class="flex items-center gap-1.5 mt-0.5">
           <PlatformBadge :platform="conversation.platform" />
           <StatusBadge :status="conversation.status" />
           <span v-if="conversation.assignedAgent" class="text-[11px] text-gray-400">
@@ -23,105 +21,115 @@
         </div>
       </div>
 
-      <!-- Human handover toggle -->
-      <button
-        class="text-xs px-2.5 py-1.5 rounded-lg border font-medium transition-all flex items-center gap-1.5"
-        :class="
-          conversation.handoverMode
-            ? 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100'
-            : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300 hover:text-gray-700'
-        "
-        :title="
-          conversation.handoverMode
-            ? 'Bot is paused — click to return control to bot'
-            : 'Take over from bot'
-        "
-        @click="emit('toggleHandover', !conversation.handoverMode)"
-      >
-        <CpuChipIcon class="w-3.5 h-3.5" />
-        {{ conversation.handoverMode ? 'Return to Bot' : 'Take Over' }}
-      </button>
-
-      <!-- Assign agent -->
-      <div ref="assignRef" class="relative">
+      <div class="flex items-center gap-1.5 flex-shrink-0">
+        <!-- Human handover toggle -->
         <button
-          class="text-xs px-2.5 py-1.5 rounded-lg border border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-700 flex items-center gap-1.5"
-          @click="assignOpen = !assignOpen"
-        >
-          <UserIcon class="w-3.5 h-3.5" />
-          Assign
-        </button>
-        <div
-          v-if="assignOpen"
-          class="absolute right-0 top-full mt-1 w-52 bg-white border border-gray-200 rounded-xl shadow-lg z-20 overflow-hidden"
-        >
-          <div v-if="agentsLoading" class="px-3 py-2 text-xs text-gray-400">Loading…</div>
-          <template v-else>
-            <button
-              class="w-full text-left px-3 py-2 text-xs text-gray-500 hover:bg-gray-50"
-              @click="assign(null)"
-            >
-              Unassign
-            </button>
-            <button
-              v-for="agent in agents"
-              :key="agent.id"
-              class="w-full text-left px-3 py-2 text-xs hover:bg-blue-50 hover:text-blue-700 flex items-center gap-2"
-              :class="
-                conversation.assignedAgentId === agent.id
-                  ? 'bg-blue-50 text-blue-700 font-medium'
-                  : 'text-gray-700'
-              "
-              @click="assign(agent.id)"
-            >
-              <span
-                class="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-700 flex-shrink-0"
-              >
-                {{ initials(`${agent.firstName} ${agent.lastName}`) }}
-              </span>
-              {{ agent.firstName }} {{ agent.lastName }}
-            </button>
-          </template>
-        </div>
-      </div>
-
-      <!-- Status actions -->
-      <div class="flex gap-1.5">
-        <button
-          v-for="s in statuses"
-          :key="s.value"
-          class="text-xs px-3 py-1 rounded-full border font-medium transition-all"
+          class="text-xs px-2.5 py-1.5 rounded-lg border font-medium transition-all flex items-center gap-1.5"
           :class="
-            conversation.status === s.value
-              ? 'bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-200'
+            conversation.handoverMode
+              ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100'
               : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300 hover:text-gray-700'
           "
-          @click="emit('updateStatus', s.value)"
+          :title="
+            conversation.handoverMode
+              ? 'Bot is paused — click to return control to bot'
+              : 'Take over from bot'
+          "
+          @click="emit('toggleHandover', !conversation.handoverMode)"
         >
-          {{ s.label }}
+          <CpuChipIcon class="w-3.5 h-3.5" />
+          {{ conversation.handoverMode ? 'Return to Bot' : 'Take Over' }}
         </button>
+
+        <!-- Assign agent -->
+        <div ref="assignRef" class="relative">
+          <button
+            class="text-xs px-2.5 py-1.5 rounded-lg border border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-700 flex items-center gap-1.5 transition-colors"
+            @click="assignOpen = !assignOpen"
+          >
+            <UserIcon class="w-3.5 h-3.5" />
+            Assign
+          </button>
+          <div
+            v-if="assignOpen"
+            class="absolute right-0 top-full mt-1.5 w-52 bg-white border border-gray-100 rounded-xl shadow-lg shadow-gray-200/60 z-20 overflow-hidden"
+          >
+            <div v-if="agentsLoading" class="px-3 py-3 text-xs text-gray-400 text-center">
+              Loading…
+            </div>
+            <template v-else>
+              <button
+                class="w-full text-left px-3 py-2.5 text-xs text-gray-400 hover:bg-gray-50 border-b border-gray-50"
+                @click="assign(null)"
+              >
+                Unassign
+              </button>
+              <button
+                v-for="agent in agents"
+                :key="agent.id"
+                class="w-full text-left px-3 py-2.5 text-xs hover:bg-blue-50 hover:text-blue-700 flex items-center gap-2.5 transition-colors"
+                :class="
+                  conversation.assignedAgentId === agent.id
+                    ? 'bg-blue-50 text-blue-700 font-semibold'
+                    : 'text-gray-700'
+                "
+                @click="assign(agent.id)"
+              >
+                <span
+                  class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-700 flex-shrink-0"
+                >
+                  {{ initials(`${agent.firstName} ${agent.lastName}`) }}
+                </span>
+                {{ agent.firstName }} {{ agent.lastName }}
+              </button>
+            </template>
+          </div>
+        </div>
+
+        <!-- Status actions -->
+        <div class="flex gap-1">
+          <button
+            v-for="s in statuses"
+            :key="s.value"
+            class="text-xs px-2.5 py-1.5 rounded-lg border font-medium transition-all"
+            :class="
+              conversation.status === s.value
+                ? s.activeClass
+                : 'bg-white text-gray-400 border-gray-200 hover:border-gray-300 hover:text-gray-600'
+            "
+            @click="emit('updateStatus', s.value)"
+          >
+            {{ s.label }}
+          </button>
+        </div>
       </div>
     </div>
 
     <!-- Secondary action bar -->
     <div
-      class="flex items-center gap-2 px-4 py-2 border-b border-gray-100 bg-white flex-shrink-0 flex-wrap"
+      class="flex items-center gap-2 px-4 py-2 border-b border-gray-100 bg-gray-50/50 flex-shrink-0 flex-wrap"
     >
       <!-- Tab switcher -->
-      <div class="flex rounded-lg border border-gray-200 overflow-hidden text-xs mr-2">
+      <div
+        class="flex rounded-lg bg-white border border-gray-200 overflow-hidden text-xs p-0.5 gap-0.5 mr-1"
+      >
         <button
-          class="px-3 py-1.5 font-medium transition-colors"
+          class="px-3 py-1 font-medium rounded-md transition-all duration-150"
           :class="
-            activeTab === 'chat' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50'
+            activeTab === 'chat'
+              ? 'bg-blue-600 text-white shadow-sm'
+              : 'text-gray-500 hover:bg-gray-50'
           "
           @click="activeTab = 'chat'"
         >
           Chat
         </button>
         <button
-          class="px-3 py-1.5 font-medium transition-colors"
+          class="px-3 py-1 font-medium rounded-md transition-all duration-150"
           :class="
-            activeTab === 'notes' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-50'
+            activeTab === 'notes'
+              ? 'bg-amber-500 text-white shadow-sm'
+              : 'text-gray-500 hover:bg-gray-50'
           "
           @click="activeTab = 'notes'"
         >
@@ -142,12 +150,12 @@
         </button>
         <div
           v-if="priorityOpen"
-          class="absolute left-0 top-full mt-1 w-36 bg-white border border-gray-200 rounded-xl shadow-lg z-20 overflow-hidden"
+          class="absolute left-0 top-full mt-1.5 w-36 bg-white border border-gray-100 rounded-xl shadow-lg shadow-gray-200/60 z-20 overflow-hidden py-0.5"
         >
           <button
             v-for="p in priorities"
             :key="p.value"
-            class="w-full text-left px-3 py-2 text-xs flex items-center gap-2 hover:bg-gray-50"
+            class="w-full text-left px-3 py-2 text-xs flex items-center gap-2 hover:bg-gray-50 transition-colors"
             :class="p.color"
             @click="setPriority(p.value)"
           >
@@ -162,21 +170,21 @@
         <span
           v-for="label in conversation.labels"
           :key="label"
-          class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 font-medium"
+          class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-violet-50 text-violet-700 font-medium border border-violet-100"
         >
           {{ label }}
-          <button class="hover:text-purple-900" @click="removeLabel(label)">×</button>
+          <button class="hover:text-violet-900 leading-none" @click="removeLabel(label)">×</button>
         </span>
         <div ref="labelRef" class="relative">
           <button
-            class="text-[11px] px-2 py-0.5 rounded-full border border-dashed border-gray-300 text-gray-400 hover:border-gray-400 hover:text-gray-600 transition-colors"
+            class="text-[11px] px-2 py-0.5 rounded-full border border-dashed border-gray-300 text-gray-400 hover:border-violet-300 hover:text-violet-500 transition-colors"
             @click="labelInputOpen = !labelInputOpen"
           >
             + label
           </button>
           <div
             v-if="labelInputOpen"
-            class="absolute left-0 top-full mt-1 z-20 bg-white border border-gray-200 rounded-xl shadow-lg p-2 w-44"
+            class="absolute left-0 top-full mt-1.5 z-20 bg-white border border-gray-100 rounded-xl shadow-lg p-2 w-44"
           >
             <input
               ref="labelInputEl"
@@ -194,7 +202,7 @@
 
       <!-- Archive button -->
       <button
-        class="text-xs px-2.5 py-1.5 rounded-lg border border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-700 flex items-center gap-1.5 transition-colors"
+        class="text-xs px-2.5 py-1.5 rounded-lg border border-gray-200 text-gray-400 hover:border-gray-300 hover:text-gray-600 flex items-center gap-1.5 transition-colors"
         :title="conversation.isArchived ? 'Unarchive' : 'Archive conversation'"
         @click="emit('archive', !conversation.isArchived)"
       >
@@ -204,21 +212,23 @@
     </div>
 
     <!-- Notes panel -->
-    <div v-if="activeTab === 'notes'" class="flex flex-col flex-1 overflow-hidden bg-amber-50/40">
+    <div v-if="activeTab === 'notes'" class="flex flex-col flex-1 overflow-hidden bg-amber-50/30">
       <div class="flex-1 overflow-y-auto px-5 py-4 space-y-3">
-        <p v-if="!store.notes.length" class="text-sm text-gray-400 text-center mt-8">
+        <p v-if="!store.notes.length" class="text-sm text-gray-400 text-center mt-10 italic">
           No internal notes yet
         </p>
         <div
           v-for="note in store.notes"
           :key="note.id"
-          class="bg-white border border-amber-200 rounded-xl px-4 py-3 shadow-sm"
+          class="bg-white border border-amber-100 rounded-xl px-4 py-3 shadow-sm"
         >
-          <p class="text-sm text-gray-800 whitespace-pre-wrap">{{ note.content }}</p>
-          <div class="flex items-center justify-between mt-2">
+          <p class="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">
+            {{ note.content }}
+          </p>
+          <div class="flex items-center justify-between mt-2.5 pt-2 border-t border-amber-50">
             <span class="text-[11px] text-gray-400">{{ formatDate(note.createdAt) }}</span>
             <button
-              class="text-[11px] text-red-400 hover:text-red-600"
+              class="text-[11px] text-red-400 hover:text-red-600 transition-colors"
               @click="store.deleteNote(note.id)"
             >
               Delete
@@ -226,17 +236,17 @@
           </div>
         </div>
       </div>
-      <div class="flex gap-2 px-4 py-3 border-t border-amber-200 bg-white flex-shrink-0">
+      <div class="flex gap-2 px-4 py-3 border-t border-amber-100 bg-white flex-shrink-0">
         <textarea
           v-model="noteDraft"
           rows="2"
-          placeholder="Write an internal note… (visible to agents only)"
-          class="flex-1 input resize-none text-sm"
+          placeholder="Write an internal note… (Ctrl+Enter to save)"
+          class="flex-1 input resize-none text-sm border-amber-200 focus:border-amber-400 focus:ring-amber-300/30"
           style="field-sizing: content"
           @keydown.ctrl.enter.prevent="submitNote"
         />
         <button
-          class="btn-primary py-2 px-3 flex-shrink-0 self-end"
+          class="btn py-2 px-3 flex-shrink-0 self-end bg-amber-500 text-white hover:bg-amber-600 focus:ring-amber-400 shadow-sm"
           :disabled="!noteDraft.trim()"
           @click="submitNote"
         >
@@ -246,7 +256,7 @@
     </div>
 
     <!-- Messages -->
-    <div v-else ref="scrollEl" class="flex-1 overflow-y-auto px-5 py-4 space-y-4 bg-gray-50/70">
+    <div v-else ref="scrollEl" class="flex-1 overflow-y-auto px-5 py-5 space-y-3 bg-gray-50/40">
       <div
         v-for="msg in messages"
         :key="msg.id"
@@ -255,42 +265,62 @@
       >
         <div
           v-if="msg.isFromContact"
-          class="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-white text-[10px] font-bold mb-0.5"
+          class="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-white text-[10px] font-bold mb-0.5 shadow-sm"
           :class="platformColor(conversation.platform)"
         >
           {{ (conversation.contactName || '?').charAt(0).toUpperCase() }}
         </div>
 
-        <div
-          class="max-w-[68%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed shadow-sm"
-          :class="
-            msg.isFromContact
-              ? 'bg-white border border-gray-200 text-gray-800 rounded-bl-md'
-              : 'bg-blue-600 text-white rounded-br-md'
-          "
-        >
-          <template v-if="msg.type === 'image' && msg.mediaUrl">
-            <img :src="mediaBase + msg.mediaUrl" class="max-w-full rounded-lg mb-1" />
-          </template>
-          <template v-else-if="msg.type === 'file' && msg.mediaUrl">
-            <a
-              :href="mediaBase + msg.mediaUrl"
-              target="_blank"
-              class="flex items-center gap-1.5 underline opacity-90"
-            >
-              <PaperClipIcon class="w-3.5 h-3.5 flex-shrink-0" />
-              {{ msg.content || 'Download file' }}
-            </a>
-          </template>
-          <template v-else>{{ msg.content }}</template>
-          <p class="text-[10px] mt-1.5 opacity-50 text-right">{{ formatDate(msg.createdAt) }}</p>
+        <div class="max-w-[66%] group">
+          <div
+            class="px-4 py-2.5 rounded-2xl text-sm leading-relaxed shadow-sm"
+            :class="
+              msg.isFromContact
+                ? 'bg-white border border-gray-100 text-gray-800 rounded-bl-md'
+                : 'bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-br-md'
+            "
+          >
+            <template v-if="msg.type === 'image' && msg.mediaUrl">
+              <img :src="mediaBase + msg.mediaUrl" class="max-w-full rounded-lg mb-1 block" />
+              <span v-if="msg.content && msg.content !== 'Image'" class="text-sm block mt-1">{{
+                msg.content
+              }}</span>
+            </template>
+            <template v-else-if="msg.type === 'file' && msg.mediaUrl">
+              <a
+                :href="mediaBase + msg.mediaUrl"
+                target="_blank"
+                class="flex items-center gap-2 font-medium"
+                :class="
+                  msg.isFromContact
+                    ? 'text-blue-600 hover:text-blue-700'
+                    : 'text-white/90 hover:text-white'
+                "
+              >
+                <div
+                  class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                  :class="msg.isFromContact ? 'bg-blue-50' : 'bg-white/20'"
+                >
+                  <PaperClipIcon class="w-4 h-4" />
+                </div>
+                <span class="text-sm truncate">{{ msg.content || 'Download file' }}</span>
+              </a>
+            </template>
+            <template v-else>{{ msg.content }}</template>
+          </div>
+          <p
+            class="text-[10px] mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+            :class="msg.isFromContact ? 'text-gray-400 pl-1' : 'text-gray-400 text-right pr-1'"
+          >
+            {{ formatDate(msg.createdAt) }}
+          </p>
         </div>
       </div>
 
       <!-- Typing indicator -->
       <div v-if="typingUsers?.length" class="flex items-end gap-2 justify-start">
         <div
-          class="bg-white border border-gray-200 px-4 py-2.5 rounded-2xl rounded-bl-md shadow-sm flex items-center gap-1.5"
+          class="bg-white border border-gray-100 px-4 py-2.5 rounded-2xl rounded-bl-md shadow-sm flex items-center gap-1.5"
         >
           <span
             class="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce"
@@ -308,7 +338,7 @@
         </div>
       </div>
 
-      <div v-if="loading" class="flex justify-center py-2">
+      <div v-if="loading" class="flex justify-center py-4">
         <svg class="w-5 h-5 animate-spin text-blue-400" fill="none" viewBox="0 0 24 24">
           <circle
             class="opacity-25"
@@ -326,26 +356,26 @@
     <!-- Canned responses picker -->
     <div
       v-if="activeTab === 'chat' && cannedOpen && activePrompts.length"
-      class="border-t border-gray-100 bg-white max-h-40 overflow-y-auto"
+      class="border-t border-gray-100 bg-white max-h-44 overflow-y-auto shadow-[0_-4px_12px_rgba(0,0,0,0.04)]"
     >
-      <p class="px-4 pt-2 pb-1 text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+      <p class="px-4 pt-2.5 pb-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
         Quick replies
       </p>
       <button
         v-for="prompt in activePrompts"
         :key="prompt.id"
-        class="w-full text-left px-4 py-2 text-sm hover:bg-blue-50 hover:text-blue-700 text-gray-700"
+        class="w-full text-left px-4 py-2.5 text-sm hover:bg-blue-50 transition-colors border-b border-gray-50 last:border-0"
         @click="insertCanned(prompt.content)"
       >
-        <span class="font-medium">{{ prompt.name }}</span>
-        <span class="text-gray-400 ml-2 text-xs">{{ truncate(prompt.content, 50) }}</span>
+        <span class="font-medium text-gray-800">{{ prompt.name }}</span>
+        <span class="text-gray-400 ml-2 text-xs">{{ truncate(prompt.content, 55) }}</span>
       </button>
     </div>
 
     <!-- Input -->
     <div
       v-if="activeTab === 'chat'"
-      class="flex items-end gap-2 px-4 py-3 border-t border-gray-200 bg-white flex-shrink-0"
+      class="flex items-end gap-2 px-4 py-3 border-t border-gray-100 bg-white flex-shrink-0"
     >
       <input ref="fileInput" type="file" class="hidden" @change="onFileChange" />
       <button
@@ -356,8 +386,12 @@
         <PaperClipIcon class="w-4 h-4" />
       </button>
       <button
-        class="flex-shrink-0 p-2 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
-        :class="cannedOpen ? 'text-blue-600 bg-blue-50' : ''"
+        class="flex-shrink-0 p-2 rounded-lg transition-colors"
+        :class="
+          cannedOpen
+            ? 'text-blue-600 bg-blue-50'
+            : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'
+        "
         title="Quick replies"
         @click="toggleCanned"
       >
@@ -367,14 +401,14 @@
         v-model="draft"
         rows="1"
         placeholder="Type a message… (Enter to send)"
-        class="flex-1 input resize-none max-h-28 overflow-y-auto text-sm"
+        class="flex-1 input resize-none max-h-28 overflow-y-auto text-sm border-gray-200"
         style="field-sizing: content"
         @keydown.enter.exact.prevent="send"
         @input="onInput"
         @blur="onBlur"
       />
       <button
-        class="btn-primary py-2.5 px-3 flex-shrink-0 shadow-sm shadow-blue-200"
+        class="btn-primary py-2.5 px-3.5 flex-shrink-0 self-end"
         :disabled="!draft.trim()"
         @click="send"
       >
@@ -439,9 +473,27 @@ const agents = ref<User[]>([])
 const agentsLoading = ref(false)
 const activePrompts = ref<Prompt[]>([])
 
+const statuses = [
+  {
+    value: 'open',
+    label: 'Open',
+    activeClass: 'bg-emerald-500 text-white border-emerald-500 shadow-sm shadow-emerald-100',
+  },
+  {
+    value: 'pending',
+    label: 'Pending',
+    activeClass: 'bg-amber-500 text-white border-amber-500 shadow-sm shadow-amber-100',
+  },
+  {
+    value: 'resolved',
+    label: 'Resolved',
+    activeClass: 'bg-violet-600 text-white border-violet-600 shadow-sm shadow-violet-100',
+  },
+]
+
 const priorities = [
   { value: 'urgent', label: 'Urgent', color: 'text-red-600' },
-  { value: 'high', label: 'High', color: 'text-orange-600' },
+  { value: 'high', label: 'High', color: 'text-orange-500' },
   { value: 'normal', label: 'Normal', color: 'text-blue-600' },
   { value: 'low', label: 'Low', color: 'text-gray-500' },
 ]
@@ -450,7 +502,7 @@ function priorityClass(p?: string) {
   if (p === 'urgent') return 'bg-red-50 text-red-700 border-red-200'
   if (p === 'high') return 'bg-orange-50 text-orange-700 border-orange-200'
   if (p === 'low') return 'bg-gray-50 text-gray-500 border-gray-200'
-  return 'bg-blue-50 text-blue-700 border-blue-200'
+  return 'bg-blue-50 text-blue-700 border-blue-100'
 }
 
 function capitalize(s: string) {
@@ -492,12 +544,6 @@ watch(labelInputOpen, async (open) => {
     labelInputEl.value?.focus()
   }
 })
-
-const statuses = [
-  { label: 'Open', value: 'open' },
-  { label: 'Pending', value: 'pending' },
-  { label: 'Resolved', value: 'resolved' },
-]
 
 const typingLabel = computed(() => {
   const users = props.typingUsers ?? []
@@ -583,7 +629,6 @@ function onBlur() {
   }
 }
 
-// Close dropdowns on outside click
 onMounted(() => {
   document.addEventListener('click', (e) => {
     const target = e.target as Node

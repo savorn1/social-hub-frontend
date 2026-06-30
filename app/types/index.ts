@@ -30,8 +30,10 @@ export interface User {
 
 export interface Role {
   id: string
+  code: string
   name: string
   description?: string
+  isDefault: boolean
   permissions: Permission[]
 }
 

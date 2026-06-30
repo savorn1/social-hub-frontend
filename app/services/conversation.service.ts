@@ -61,6 +61,11 @@ export const useConversationService = () => {
           content,
         })
       }
+      if (platform === 'whatsapp') {
+        return http.post<Message>(`/integrations/whatsapp/conversations/${conversationId}/send`, {
+          content,
+        })
+      }
       return http.post<Message>('/conversations/messages', { conversationId, content })
     },
     getNotes: (conversationId: string) =>
