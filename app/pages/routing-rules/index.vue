@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 max-w-4xl">
+  <div class="p-6 max-w-6xl">
     <div class="flex items-center justify-between mb-6">
       <h1 class="text-xl font-bold text-gray-900 dark:text-slate-100">Routing Rules</h1>
       <button class="btn-primary" @click="openCreate">+ New Rule</button>
@@ -7,43 +7,57 @@
 
     <div v-if="loading" class="text-sm text-gray-400 dark:text-slate-500">Loading…</div>
 
-    <div v-else-if="rules.length === 0" class="card p-10 text-center text-gray-400 dark:text-slate-500 text-sm">
-      No routing rules yet. Create one to auto-assign conversations.
-    </div>
-
-    <div v-else class="space-y-3">
-      <div v-for="rule in rules" :key="rule.id" class="card p-4 flex items-start gap-4">
-        <div class="flex-1">
-          <div class="flex items-center gap-2 mb-1">
-            <span class="font-medium text-gray-900 dark:text-slate-100">{{ rule.name }}</span>
-            <span
-              class="text-xs px-1.5 py-0.5 rounded"
-              :class="rule.isActive ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400'"
-            >
-              {{ rule.isActive ? 'Active' : 'Inactive' }}
-            </span>
-            <span class="text-xs text-gray-400 dark:text-slate-500">Priority: {{ rule.priority }}</span>
-          </div>
-          <div class="flex flex-wrap gap-1">
-            <span
-              v-for="(cond, i) in rule.conditions"
-              :key="i"
-              class="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 px-2 py-0.5 rounded-full"
-            >
-              {{ cond.field }} {{ cond.operator }} "{{ cond.value }}"
-            </span>
-          </div>
-          <div class="text-xs text-gray-500 dark:text-slate-400 mt-1">
-            Action: assign to agent {{ rule.assignedAgentId ?? '—' }}
-          </div>
-        </div>
-        <div class="flex gap-2 shrink-0">
-          <button class="btn-secondary text-xs" @click="openEdit(rule)">Edit</button>
-          <button class="btn-secondary text-xs text-red-600" @click="deleteRule(rule.id)">
-            Delete
-          </button>
-        </div>
-      </div>
+    <div v-else class="card overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 dark:bg-slate-700/50 border-b border-gray-200 dark:border-slate-700">
+          <tr>
+            <th class="text-left px-4 py-3 font-medium text-gray-600 dark:text-slate-400">Name</th>
+            <th class="text-left px-4 py-3 font-medium text-gray-600 dark:text-slate-400">Status</th>
+            <th class="text-left px-4 py-3 font-medium text-gray-600 dark:text-slate-400">Priority</th>
+            <th class="text-left px-4 py-3 font-medium text-gray-600 dark:text-slate-400">Conditions</th>
+            <th class="text-left px-4 py-3 font-medium text-gray-600 dark:text-slate-400">Assign Agent</th>
+            <th class="px-4 py-3" />
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 dark:divide-slate-700">
+          <tr v-if="rules.length === 0">
+            <td colspan="6" class="px-4 py-10 text-center text-sm text-gray-400 dark:text-slate-500">No data</td>
+          </tr>
+          <tr v-for="rule in rules" :key="rule.id" class="hover:bg-gray-50 dark:hover:bg-slate-700/30">
+            <td class="px-4 py-3 font-medium text-gray-900 dark:text-slate-100">{{ rule.name }}</td>
+            <td class="px-4 py-3">
+              <span
+                class="text-xs px-1.5 py-0.5 rounded"
+                :class="rule.isActive ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400'"
+              >
+                {{ rule.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td class="px-4 py-3 text-gray-500 dark:text-slate-400">{{ rule.priority }}</td>
+            <td class="px-4 py-3">
+              <div class="flex flex-wrap gap-1">
+                <span
+                  v-for="(cond, i) in rule.conditions"
+                  :key="i"
+                  class="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 px-2 py-0.5 rounded-full"
+                >
+                  {{ cond.field }} {{ cond.operator }} "{{ cond.value }}"
+                </span>
+                <span v-if="!rule.conditions?.length" class="text-gray-400 dark:text-slate-500">—</span>
+              </div>
+            </td>
+            <td class="px-4 py-3 text-gray-500 dark:text-slate-400 font-mono text-xs">
+              {{ rule.assignedAgentId ?? '—' }}
+            </td>
+            <td class="px-4 py-3">
+              <div class="flex gap-2 justify-end">
+                <button class="btn-secondary text-xs" @click="openEdit(rule)">Edit</button>
+                <button class="btn-secondary text-xs text-red-600" @click="deleteRule(rule.id)">Delete</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- Create / Edit Modal -->
@@ -117,11 +131,12 @@
 </template>
 
 <script setup lang="ts">
+import { useRoutingRulesService } from '~/services/routing-rules.service'
 import type { RoutingRule, RuleCondition } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
 
-const { $api } = useNuxtApp()
+const service = useRoutingRulesService()
 const toast = useToast()
 
 const rules = ref<RoutingRule[]>([])
@@ -143,8 +158,13 @@ onMounted(loadRules)
 
 async function loadRules() {
   loading.value = true
-  rules.value = await $api.get('/routing-rules')
-  loading.value = false
+  try {
+    rules.value = (await service.findAll()) ?? []
+  } catch {
+    toast.error('Failed to load rules')
+  } finally {
+    loading.value = false
+  }
 }
 
 function openCreate() {
@@ -158,7 +178,7 @@ function openEdit(rule: RoutingRule) {
     name: rule.name,
     priority: rule.priority,
     isActive: rule.isActive,
-    conditions: rule.conditions.map((c) => ({ ...c })),
+    conditions: rule.conditions.map((c: RuleCondition) => ({ ...c })),
     assignedAgentId: rule.assignedAgentId ?? '',
   })
   editing.value = rule.id
@@ -185,10 +205,10 @@ async function save() {
   }
   try {
     if (editing.value) {
-      await $api.patch(`/routing-rules/${editing.value}`, dto)
+      await service.update(editing.value, dto)
       toast.success('Rule updated')
     } else {
-      await $api.post('/routing-rules', dto)
+      await service.create(dto)
       toast.success('Rule created')
     }
     modalOpen.value = false
@@ -204,7 +224,7 @@ async function save() {
 async function deleteRule(id: string) {
   if (!confirm('Delete this rule?')) return
   try {
-    await $api.delete(`/routing-rules/${id}`)
+    await service.remove(id)
     await loadRules()
     toast.success('Rule deleted')
   } catch {
