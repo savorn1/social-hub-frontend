@@ -1,12 +1,20 @@
 <template>
   <div class="p-6 max-w-3xl">
-    <h1 class="text-xl font-bold text-gray-900 dark:text-slate-100 mb-6">Settings</h1>
+    <div class="mb-6">
+      <h1 class="text-xl font-bold text-gray-900 dark:text-slate-100">Settings</h1>
+      <p class="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Manage your profile, security, and integrations</p>
+    </div>
 
-    <div class="space-y-6">
+    <div class="space-y-5">
       <!-- Profile -->
       <div class="card p-6">
-        <h2 class="text-sm font-semibold text-gray-700 dark:text-slate-300 mb-4">Profile</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div class="flex items-center gap-2.5 mb-5">
+          <div class="w-7 h-7 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
+            <UserCircleIcon class="w-4 h-4 text-blue-600 dark:text-blue-400" />
+          </div>
+          <h2 class="text-sm font-semibold text-gray-800 dark:text-slate-200">Profile</h2>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
           <div>
             <label class="label">First Name <span class="text-red-400">*</span></label>
             <input v-model="form.firstName" class="input" placeholder="John">
@@ -17,7 +25,7 @@
           </div>
           <div class="sm:col-span-2">
             <label class="label">Email</label>
-            <input :value="user?.email" class="input bg-gray-50 dark:bg-slate-700/50" readonly>
+            <input :value="user?.email" class="input bg-gray-50 dark:bg-slate-700/50 cursor-not-allowed" readonly>
           </div>
         </div>
         <div class="flex justify-end">
@@ -29,8 +37,13 @@
 
       <!-- Password -->
       <div class="card p-6">
-        <h2 class="text-sm font-semibold text-gray-700 dark:text-slate-300 mb-4">Change Password</h2>
-        <div class="space-y-3 mb-4">
+        <div class="flex items-center gap-2.5 mb-5">
+          <div class="w-7 h-7 rounded-xl bg-violet-50 dark:bg-violet-900/30 flex items-center justify-center flex-shrink-0">
+            <LockClosedIcon class="w-4 h-4 text-violet-600 dark:text-violet-400" />
+          </div>
+          <h2 class="text-sm font-semibold text-gray-800 dark:text-slate-200">Change Password</h2>
+        </div>
+        <div class="space-y-3 mb-5">
           <div>
             <label class="label">Current Password</label>
             <input v-model="pwd.current" class="input" type="password" placeholder="Current password">
@@ -44,7 +57,7 @@
             <input v-model="pwd.confirm" class="input" type="password" placeholder="Re-enter new password">
           </div>
         </div>
-        <p v-if="pwdMismatch" class="text-xs text-red-500 -mt-1">Passwords do not match</p>
+        <p v-if="pwdMismatch" class="text-xs text-red-500 -mt-2 mb-3">Passwords do not match</p>
         <div class="flex justify-end">
           <button
             class="btn-primary"
@@ -58,52 +71,22 @@
 
       <!-- Webhook URLs -->
       <div class="card p-6">
-        <h2 class="text-sm font-semibold text-gray-700 dark:text-slate-300 mb-4">Webhook URLs</h2>
+        <div class="flex items-center gap-2.5 mb-5">
+          <div class="w-7 h-7 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center flex-shrink-0">
+            <GlobeAltIcon class="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+          </div>
+          <h2 class="text-sm font-semibold text-gray-800 dark:text-slate-200">Webhook URLs</h2>
+        </div>
         <div class="space-y-3">
-          <div>
-            <label class="label">Facebook Webhook</label>
+          <div v-for="wb in webhooks" :key="wb.label">
+            <label class="label">{{ wb.label }}</label>
             <div class="flex gap-2">
               <input
-                :value="`${apiBase}/integrations/facebook/webhook`"
-                class="input bg-gray-50 dark:bg-slate-700/50 flex-1"
+                :value="wb.url"
+                class="input bg-gray-50 dark:bg-slate-700/50 flex-1 font-mono text-xs cursor-not-allowed"
                 readonly
               >
-              <button
-                class="btn-secondary"
-                @click="copy(`${apiBase}/integrations/facebook/webhook`)"
-              >
-                <ClipboardIcon class="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-          <div>
-            <label class="label">Telegram Webhook</label>
-            <div class="flex gap-2">
-              <input
-                :value="`${apiBase}/integrations/telegram/webhook`"
-                class="input bg-gray-50 dark:bg-slate-700/50 flex-1"
-                readonly
-              >
-              <button
-                class="btn-secondary"
-                @click="copy(`${apiBase}/integrations/telegram/webhook`)"
-              >
-                <ClipboardIcon class="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-          <div>
-            <label class="label">WhatsApp Webhook</label>
-            <div class="flex gap-2">
-              <input
-                :value="`${apiBase}/integrations/whatsapp/webhook`"
-                class="input bg-gray-50 dark:bg-slate-700/50 flex-1"
-                readonly
-              >
-              <button
-                class="btn-secondary"
-                @click="copy(`${apiBase}/integrations/whatsapp/webhook`)"
-              >
+              <button class="btn-secondary flex-shrink-0" @click="copy(wb.url)">
                 <ClipboardIcon class="w-4 h-4" />
               </button>
             </div>
@@ -113,26 +96,35 @@
 
       <!-- Business Hours -->
       <div class="card p-6">
-        <h2 class="text-sm font-semibold text-gray-700 dark:text-slate-300 mb-4">Business Hours</h2>
-        <p class="text-xs text-gray-500 dark:text-slate-400 mb-4">
-          Outside these hours, incoming messages receive an auto-away reply instead of being routed
-          to the chatbot.
+        <div class="flex items-center gap-2.5 mb-2">
+          <div class="w-7 h-7 rounded-xl bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
+            <ClockIcon class="w-4 h-4 text-amber-600 dark:text-amber-400" />
+          </div>
+          <h2 class="text-sm font-semibold text-gray-800 dark:text-slate-200">Business Hours</h2>
+        </div>
+        <p class="text-xs text-gray-500 dark:text-slate-400 mb-5 ml-9">
+          Outside these hours, incoming messages receive an auto-away reply instead of being routed to the chatbot.
         </p>
-        <div v-if="bhLoading" class="text-sm text-gray-400 dark:text-slate-500">Loading…</div>
+        <div v-if="bhLoading" class="space-y-3">
+          <div v-for="i in 5" :key="i" class="flex items-center gap-4 animate-pulse">
+            <div class="h-3 bg-gray-100 dark:bg-slate-700 rounded w-20" />
+            <div class="h-5 bg-gray-100 dark:bg-slate-700 rounded-full w-9" />
+          </div>
+        </div>
         <div v-else class="space-y-3">
           <div v-for="day in businessHours" :key="day.dayOfWeek" class="flex items-center gap-4">
-            <span class="w-24 text-sm text-gray-700 dark:text-slate-300">{{ DAY_NAMES[day.dayOfWeek] }}</span>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                :checked="day.isEnabled"
-                class="sr-only peer"
-                @change="toggleDay(day)"
-              >
-              <div
-                class="w-9 h-5 bg-gray-200 dark:bg-slate-600 rounded-full peer peer-checked:bg-indigo-600 transition-colors after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-4"
+            <span class="w-24 text-sm font-medium text-gray-700 dark:text-slate-300 flex-shrink-0">{{ DAY_NAMES[day.dayOfWeek] }}</span>
+            <button
+              type="button"
+              class="relative inline-flex h-5 w-9 flex-shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none"
+              :class="day.isEnabled ? 'bg-blue-600' : 'bg-gray-200 dark:bg-slate-600'"
+              @click="toggleDay(day)"
+            >
+              <span
+                class="pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow transform transition-transform duration-200"
+                :class="day.isEnabled ? 'translate-x-4' : 'translate-x-0'"
               />
-            </label>
+            </button>
             <template v-if="day.isEnabled">
               <input
                 v-model="day.startTime"
@@ -157,7 +149,13 @@
 </template>
 
 <script setup lang="ts">
-import { ClipboardIcon } from '@heroicons/vue/24/outline'
+import {
+  ClipboardIcon,
+  UserCircleIcon,
+  LockClosedIcon,
+  GlobeAltIcon,
+  ClockIcon,
+} from '@heroicons/vue/24/outline'
 import type { BusinessHours } from '~/types'
 
 definePageMeta({ middleware: 'auth' })
@@ -180,6 +178,12 @@ const pwdMismatch = computed(() => pwd.confirm.length > 0 && pwd.next !== pwd.co
 
 const businessHours = ref<BusinessHours[]>([])
 const bhLoading = ref(true)
+
+const webhooks = computed(() => [
+  { label: 'Facebook Webhook', url: `${apiBase}/integrations/facebook/webhook` },
+  { label: 'Telegram Webhook', url: `${apiBase}/integrations/telegram/webhook` },
+  { label: 'WhatsApp Webhook', url: `${apiBase}/integrations/whatsapp/webhook` },
+])
 
 onMounted(async () => {
   try {

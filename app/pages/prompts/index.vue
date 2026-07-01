@@ -84,9 +84,6 @@
           title="No prompts yet"
           subtitle="Create prompt templates for your AI responses"
         >
-          <button class="btn-primary mt-4" @click="openCreate">
-            <PlusIcon class="w-4 h-4" /> New Prompt
-          </button>
         </EmptyState>
       </div>
     </div>

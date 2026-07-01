@@ -83,9 +83,6 @@
           title="No WhatsApp numbers connected"
           subtitle="Add a WhatsApp Business phone number using its Phone Number ID and access token"
         >
-          <button class="btn-primary mt-4" @click="connectDialog = true">
-            <PlusIcon class="w-4 h-4" /> Add Number
-          </button>
         </EmptyState>
       </div>
     </div>

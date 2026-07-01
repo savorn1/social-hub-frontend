@@ -168,9 +168,6 @@
           title="No knowledge bases"
           subtitle="Create one to start training your chatbots"
         >
-          <button class="btn-primary mt-4" @click="createBaseDialog = true">
-            <PlusIcon class="w-4 h-4" /> New Base
-          </button>
         </EmptyState>
       </div>
     </div>

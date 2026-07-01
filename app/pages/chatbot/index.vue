@@ -79,18 +79,6 @@
           </button>
         </div>
       </div>
-
-      <div v-if="!store.chatbots.length" class="md:col-span-2 lg:col-span-3">
-        <EmptyState
-          :icon="CpuChipIcon"
-          title="No chatbots yet"
-          subtitle="Create your first chatbot to automate responses"
-        >
-          <button class="btn-primary mt-4" @click="dialog = true">
-            <PlusIcon class="w-4 h-4" /> New Chatbot
-          </button>
-        </EmptyState>
-      </div>
     </div>
 
     <!-- Create dialog -->

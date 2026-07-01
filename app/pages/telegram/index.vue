@@ -85,19 +85,19 @@
 
           <div v-if="webhookInfos[inbox.id]?.isRegistered">
             <p class="text-[11px] text-green-600 font-mono truncate">
-              {{ webhookInfos[inbox.id].url }}
+              {{ webhookInfos[inbox.id]?.url }}
             </p>
             <p
-              v-if="webhookInfos[inbox.id]?.pending_update_count > 0"
+              v-if="webhookInfos[inbox.id].pending_update_count > 0"
               class="text-[11px] text-amber-600 mt-0.5"
             >
-              {{ webhookInfos[inbox.id].pending_update_count }} pending updates
+              {{ webhookInfos[inbox.id]?.pending_update_count }} pending updates
             </p>
             <p
               v-if="webhookInfos[inbox.id]?.last_error_message"
               class="text-[11px] text-red-600 mt-0.5"
             >
-              Error: {{ webhookInfos[inbox.id].last_error_message }}
+              Error: {{ webhookInfos[inbox.id]?.last_error_message }}
             </p>
           </div>
 
@@ -131,9 +131,6 @@
           title="No Telegram bots connected"
           subtitle="Create a bot with @BotFather and paste the token below"
         >
-          <button class="btn-primary mt-4" @click="connectDialog = true">
-            <PlusIcon class="w-4 h-4" /> Add Bot
-          </button>
         </EmptyState>
       </div>
     </div>

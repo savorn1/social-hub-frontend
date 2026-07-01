@@ -10,46 +10,80 @@
           v-model="search"
           type="text"
           placeholder="Search conversations…"
-          class="input pl-8 text-sm py-1.5 bg-gray-50 dark:bg-slate-800 border-gray-100 dark:border-slate-600 focus:bg-white dark:focus:bg-slate-800"
+          class="input pl-8 text-sm py-1.5 bg-gray-50 dark:bg-slate-800 border-gray-100 dark:border-slate-700 focus:bg-white dark:focus:bg-slate-800"
           @input="emit('search', search)"
         />
       </div>
     </div>
 
     <div class="flex-1 overflow-y-auto">
+      <!-- Skeleton -->
+      <div v-if="loading" class="flex flex-col">
+        <div
+          v-for="i in 6"
+          :key="i"
+          class="flex items-start gap-3 px-4 py-3.5 animate-pulse border-b border-gray-50 dark:border-slate-700/50 last:border-0"
+        >
+          <div class="w-9 h-9 rounded-full bg-gray-100 dark:bg-slate-700 flex-shrink-0" />
+          <div class="flex-1 space-y-2 pt-0.5">
+            <div class="flex justify-between">
+              <div class="h-3 bg-gray-100 dark:bg-slate-700 rounded w-28" />
+              <div class="h-2.5 bg-gray-100 dark:bg-slate-700 rounded w-10" />
+            </div>
+            <div class="h-2.5 bg-gray-100 dark:bg-slate-700 rounded w-3/4" />
+            <div class="flex gap-1.5">
+              <div class="h-4 bg-gray-100 dark:bg-slate-700 rounded-full w-14" />
+              <div class="h-4 bg-gray-100 dark:bg-slate-700 rounded-full w-12" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conversation rows -->
       <button
         v-for="conv in conversations"
         :key="conv.id"
-        class="w-full flex items-start gap-3 px-4 py-3.5 transition-colors text-left relative group"
-        :class="activeId === conv.id ? 'bg-blue-50/80 dark:bg-blue-900/20' : 'hover:bg-gray-50/80 dark:hover:bg-slate-800/50'"
+        class="w-full flex items-start gap-3 px-4 py-3.5 transition-all text-left relative group border-b border-gray-50 dark:border-slate-700/30 last:border-0"
+        :class="
+          activeId === conv.id
+            ? 'bg-blue-50/80 dark:bg-blue-900/20'
+            : 'hover:bg-gray-50/80 dark:hover:bg-slate-800/50'
+        "
         @click="emit('select', conv.id)"
       >
-        <!-- Active indicator bar -->
+        <!-- Active left bar -->
         <span
-          class="absolute left-0 top-2 bottom-2 w-0.5 rounded-r-full transition-all duration-150"
-          :class="activeId === conv.id ? 'bg-blue-500' : 'bg-transparent'"
+          class="absolute left-0 top-2.5 bottom-2.5 w-0.5 rounded-r-full transition-all duration-200"
+          :class="activeId === conv.id ? 'bg-gradient-to-b from-blue-500 to-indigo-500 opacity-100' : 'opacity-0'"
         />
 
         <!-- Avatar -->
         <div
-          class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-white text-xs font-bold shadow-sm mt-0.5"
+          class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-white text-xs font-bold shadow-sm mt-0.5 ring-2 ring-white dark:ring-slate-900"
           :class="platformColor(conv.platform)"
         >
           {{ (conv.contactName || conv.contactId || '?').charAt(0).toUpperCase() }}
         </div>
 
         <div class="flex-1 min-w-0">
+          <!-- Name + time -->
           <div class="flex items-center justify-between gap-1 mb-1">
             <span
-              class="text-sm font-semibold truncate"
-              :class="activeId === conv.id ? 'text-blue-700 dark:text-blue-400' : 'text-gray-900 dark:text-slate-100'"
+              class="text-sm font-semibold truncate leading-tight"
+              :class="
+                activeId === conv.id
+                  ? 'text-blue-700 dark:text-blue-400'
+                  : 'text-gray-900 dark:text-slate-100'
+              "
             >
               {{ conv.contactName || conv.contactId || 'Unknown' }}
             </span>
-            <span class="text-[11px] text-gray-400 dark:text-slate-500 flex-shrink-0 tabular-nums">{{
-              timeAgo(conv.updatedAt)
-            }}</span>
+            <span class="text-[11px] text-gray-400 dark:text-slate-500 flex-shrink-0 tabular-nums">
+              {{ timeAgo(conv.updatedAt) }}
+            </span>
           </div>
+
+          <!-- Badges row -->
           <div class="flex items-center gap-1.5 flex-wrap">
             <PlatformBadge :platform="conv.platform" />
             <StatusBadge :status="conv.status" />
@@ -74,22 +108,13 @@
         </div>
       </button>
 
-      <div v-if="!conversations.length && !loading" class="pt-4">
+      <!-- Empty -->
+      <div v-if="!conversations.length && !loading" class="pt-6">
         <EmptyState
           :icon="InboxIcon"
           :title="search ? 'No results found' : 'No conversations yet'"
           :subtitle="search ? 'Try a different search term' : 'Conversations will appear here'"
         />
-      </div>
-
-      <div v-if="loading" class="flex flex-col gap-2 p-3">
-        <div v-for="i in 5" :key="i" class="flex items-start gap-3 p-2 animate-pulse">
-          <div class="w-9 h-9 rounded-full bg-gray-100 dark:bg-slate-700 flex-shrink-0" />
-          <div class="flex-1 space-y-2 pt-0.5">
-            <div class="h-3 bg-gray-100 dark:bg-slate-700 rounded w-3/4" />
-            <div class="h-2.5 bg-gray-100 dark:bg-slate-700 rounded w-1/2" />
-          </div>
-        </div>
       </div>
     </div>
   </div>

@@ -72,23 +72,6 @@
             </button>
           </div>
         </div>
-
-        <div v-if="!inboxes.length && !loading" class="sm:col-span-2 lg:col-span-3">
-          <EmptyState
-            :icon="ChatBubbleOvalLeftIcon"
-            title="No Facebook pages connected"
-            subtitle="Use Sync Pages to import from Facebook, or connect manually"
-          >
-            <div class="flex gap-2 mt-4 justify-center">
-              <button class="btn-secondary" @click="syncDialog = true">
-                <ArrowPathIcon class="w-4 h-4" /> Sync Pages
-              </button>
-              <button class="btn-primary" @click="manualDialog = true">
-                <PlusIcon class="w-4 h-4" /> Connect Manually
-              </button>
-            </div>
-          </EmptyState>
-        </div>
       </div>
     </div>
 
